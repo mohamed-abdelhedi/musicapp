@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio_background/just_audio_background.dart';
-import 'package:musicapp/audioplayer.dart';
-import 'package:musicapp/audioplayer1.dart';
-import 'package:musicapp/homepage.dart';
-import 'package:musicapp/signup.dart';
-import 'package:musicapp/songoverview.dart';
-import 'package:musicapp/welcoming.dart';
+import 'package:musicapp/localplaylist.dart';
+import 'package:musicapp/provider/song_model_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:provider/provider.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,7 +13,10 @@ Future main() async {
     androidNotificationChannelName: 'Audio playback',
     androidNotificationOngoing: true,
   );
-  runApp(const MyApp());
+  runApp(ChangeNotifierProvider(
+    create: (context) => SongModelProvider(),
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -40,6 +40,6 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
         ),
         debugShowCheckedModeBanner: false,
-        home: SongoverviewWidget());
+        home: localplaylisttWidget());
   }
 }

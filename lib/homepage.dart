@@ -567,11 +567,11 @@ class _HomePageCopyWidgetState extends State<HomePageCopyWidget> {
                   alignment: AlignmentDirectional(0, 1),
                   child: GestureDetector(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => SongoverviewWidget()),
-                      );
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //       builder: (context) => SongoverviewWidget(Player: ''null'', songModelList: [],)),
+                      // );
                     },
                     child: Container(
                       width: MediaQuery.of(context).size.width,

@@ -1,5 +1,10 @@
+import 'dart:developer';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import 'package:musicapp/provider/song_model_provider.dart';
+import 'package:on_audio_query/on_audio_query.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -11,7 +16,11 @@ import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:rxdart/rxdart.dart';
 
 class SongoverviewWidget extends StatefulWidget {
-  const SongoverviewWidget({Key? key}) : super(key: key);
+  const SongoverviewWidget(
+      {Key? key, required this.songModelList, required this.player})
+      : super(key: key);
+  final List<SongModel> songModelList;
+  final AudioPlayer player;
 
   @override
   _SongoverviewWidgetState createState() => _SongoverviewWidgetState();
@@ -19,47 +28,178 @@ class SongoverviewWidget extends StatefulWidget {
 
 class _SongoverviewWidgetState extends State<SongoverviewWidget> {
   late AudioPlayer _audioPlayer = AudioPlayer();
-
+  Duration _duration = const Duration();
+  Duration _position = const Duration();
   double? sliderValue;
+  bool _isPlaying = false;
+  List<AudioSource> songList = [];
+
+  int currentIndex = 0;
+
+  void popBack() {
+    Navigator.pop(context);
+  }
+
+  void seekToSeconds(int seconds) {
+    Duration duration = Duration(seconds: seconds);
+    widget.player.seek(duration);
+  }
+
+  // void parseSong() {
+  //   try {
+  //     for (var element in widget.songModelList) {
+  //       songList.add(
+  //         AudioSource.uri(
+  //           Uri.parse(element.uri!),
+  //           tag: MediaItem(
+  //             id: element.id.toString(),
+  //             album: element.album ?? "No Album",
+  //             title: element.displayNameWOExt,
+  //             artUri: Uri.parse(element.id.toString()),
+  //           ),
+  //         ),
+  //       );
+  //     }
+
+  //     widget.player.setAudioSource(
+  //       ConcatenatingAudioSource(children: songList),
+  //     );
+  //     widget.player.play();
+  //     _isPlaying = true;
+
+  //     widget.player.durationStream.listen((duration) {
+  //       if (duration != null) {
+  //         setState(() {
+  //           _duration = duration;
+  //         });
+  //       }
+  //     });
+  //     widget.player.positionStream.listen((position) {
+  //       setState(() {
+  //         _position = position;
+  //       });
+  //     });
+  //     listenToEvent();
+  //     listenToSongIndex();
+  //   } on Exception catch (_) {
+  //     popBack();
+  //   }
+  // }
+
+  // void listenToEvent() {
+  //   widget.player.playerStateStream.listen((state) {
+  //     if (state.playing) {
+  //       setState(() {
+  //         _isPlaying = true;
+  //       });
+  //     } else {
+  //       setState(() {
+  //         _isPlaying = false;
+  //       });
+  //     }
+  //     if (state.processingState == ProcessingState.completed) {
+  //       setState(() {
+  //         _isPlaying = false;
+  //       });
+  //     }
+  //   });
+  // }
+
+  // void listenToSongIndex() {
+  //   widget.player.currentIndexStream.listen(
+  //     (event) {
+  //       setState(
+  //         () {
+  //           if (event != null) {
+  //             currentIndex = event;
+  //           }
+  //           context
+  //               .read<SongModelProvider>()
+  //               .setId(widget.songModelList[currentIndex].id);
+  //         },
+  //       );
+  //     },
+  //   );
+  // }
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _unfocusNode = FocusNode();
-  final _playlist = ConcatenatingAudioSource(children: [
-    AudioSource.uri(
-      Uri.parse(
-          'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3'),
-      tag: MediaItem(
-        // Specify a unique ID for each media item:
-        id: '1',
-        // Metadata to display in the notification:
-        album: "Album name",
-        title: "Song name",
-        artUri: Uri.parse('https://picsum.photos/seed/204/600'),
-      ),
-    ),
-    AudioSource.uri(
-      Uri.parse(' '),
-      tag: MediaItem(
-        // Specify a unique ID for each media item:
-        id: '1',
-        // Metadata to display in the notification:
-        album: "Album name",
-        title: "Song name",
-        artUri: Uri.parse('https://picsum.photos/seed/205/600'),
-      ),
-    ),
-  ]);
+  // final _playlist = ConcatenatingAudioSource(children: [
+  //   AudioSource.uri(
+  //     Uri.parse(
+  //         'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3'),
+  //     tag: MediaItem(
+  //       // Specify a unique ID for each media item:
+  //       id: '1',
+  //       // Metadata to display in the notification:
+  //       artist: "Album name",
+  //       title: "Song name",
+  //       artUri: Uri.parse('https://picsum.photos/seed/204/600'),
+  //     ),
+  //   ),
+  //   AudioSource.uri(
+  //     Uri.parse(' '),
+  //     tag: MediaItem(
+  //       // Specify a unique ID for each media item:
+  //       id: '1',
+  //       // Metadata to display in the notification:
+  //       artist: "Album name",
+  //       title: "Song name",
+  //       artUri: Uri.parse('https://picsum.photos/seed/205/600'),
+  //     ),
+  //   ),
+  // ]);
+
+  late List<SongModel> _songModelList = [];
+
+  // void loadSongs() {
+  //   // Load songs from a data source
+  //   _songModelList =
+  //       widget.songModelList; // Assign the loaded songs to _songModelList
+  // }
+
+  // playsong(String uri) {
+  //   try {
+  //     _audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(uri)));
+  //   } on Exception {
+  //     log("error parsing song");
+  //   }
+  // }
 
   @override
   void initState() {
     super.initState();
+
+    _audioPlayer = widget.player;
+    _songModelList = widget.songModelList;
+
+    print('-------------');
+    print(_audioPlayer);
+    print(_songModelList[0]);
+    print('-------------');
     _init();
     WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
 
   Future<void> _init() async {
-    await _audioPlayer.setLoopMode(LoopMode.all);
-    await _audioPlayer.setAudioSource(_playlist);
+    String uri = _songModelList[0].uri!;
+
+    String album = _songModelList[0].artist ?? '';
+    String artUri = _songModelList[0].displayName;
+
+    await _audioPlayer.setAudioSource(AudioSource.uri(
+      Uri.parse(uri),
+      tag: MediaItem(
+        // Specify a unique ID for each media item:
+        id: '1',
+        // Metadata to display in the notification:
+        album: album,
+        title: artUri,
+        artUri: Uri.parse('https://picsum.photos/seed/204/600'),
+      ),
+    ));
+    // await _audioPlayer.setLoopMode(LoopMode.all);
+    // await _audioPlayer.setAudioSource(audioSource);
   }
 
   @override
@@ -84,7 +224,7 @@ class _SongoverviewWidgetState extends State<SongoverviewWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: Color(0xFF23262A),
+      backgroundColor: const Color(0xFF23262A),
       body: SafeArea(
         child: GestureDetector(
           onTap: () => FocusScope.of(context).requestFocus(_unfocusNode),
@@ -92,7 +232,7 @@ class _SongoverviewWidgetState extends State<SongoverviewWidget> {
             mainAxisSize: MainAxisSize.max,
             children: [
               Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
+                padding: const EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -108,12 +248,12 @@ class _SongoverviewWidgetState extends State<SongoverviewWidget> {
                         size: 30,
                       ),
                       onPressed: () {
-                        print('IconButton pressed ...');
+                        popBack();
                       },
                     ),
                     Expanded(
                       child: Align(
-                        alignment: AlignmentDirectional(0, 0),
+                        alignment: const AlignmentDirectional(0, 0),
                         child: Text(
                           'PLAYING NOW',
                           textAlign: TextAlign.center,
@@ -129,7 +269,7 @@ class _SongoverviewWidgetState extends State<SongoverviewWidget> {
                       ),
                     ),
                     Align(
-                      alignment: AlignmentDirectional(0, 0),
+                      alignment: const AlignmentDirectional(0, 0),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.end,
@@ -146,7 +286,7 @@ class _SongoverviewWidgetState extends State<SongoverviewWidget> {
                               size: 30,
                             ),
                             onPressed: () {
-                              print('IconButton pressed ...');
+                              popBack();
                             },
                           ),
                         ],
@@ -156,82 +296,34 @@ class _SongoverviewWidgetState extends State<SongoverviewWidget> {
                 ),
               ),
               Align(
-                alignment: AlignmentDirectional(0, 0),
+                alignment: const AlignmentDirectional(0, 0),
                 child: Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0, 50, 0, 0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(0, 50, 0, 0),
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.max,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      StreamBuilder<SequenceState?>(
+                          stream: _audioPlayer.sequenceStateStream,
+                          builder: (context, snapshot) {
+                            final state = snapshot.data;
+                            if (state?.sequence.isEmpty ?? true) {
+                              return const SizedBox();
+                            }
+                            final metadata =
+                                state!.currentSource!.tag as MediaItem;
+                            print('--------------');
+                            log(metadata.toString());
+                            print('--------------');
+                            return MediaMetadata(
+                              imageUrl: 'https://picsum.photos/seed/205/600',
+                              artist: metadata.artist ?? '',
+                              title: metadata.title,
+                            );
+                          }),
                       Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(0, 70, 0, 0),
-                        child: Image.network(
-                          'https://picsum.photos/seed/488/600',
-                          width: MediaQuery.of(context).size.width * 0.8,
-                          height: MediaQuery.of(context).size.height * 0.3,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      Align(
-                        alignment: AlignmentDirectional(0, 0),
-                        child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(30, 60, 0, 0),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Column(
-                                mainAxisSize: MainAxisSize.max,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Baby boy',
-                                    style: FlutterFlowTheme.of(context)
-                                        .bodyText1
-                                        .override(
-                                          fontFamily: 'Poppins',
-                                          color: FlutterFlowTheme.of(context)
-                                              .primaryBtnText,
-                                          fontSize: 25,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                  ),
-                                  Text(
-                                    'Childish Gambio',
-                                    style: FlutterFlowTheme.of(context)
-                                        .bodyText1
-                                        .override(
-                                          fontFamily: 'Poppins',
-                                          color: Color(0xFF565A5E),
-                                        ),
-                                  ),
-                                ],
-                              ),
-                              Expanded(
-                                child: Align(
-                                  alignment: AlignmentDirectional(0.75, 0),
-                                  child: FlutterFlowIconButton(
-                                    borderColor: Colors.transparent,
-                                    borderRadius: 30,
-                                    borderWidth: 1,
-                                    buttonSize: 60,
-                                    icon: Icon(
-                                      Icons.favorite_border,
-                                      color: FlutterFlowTheme.of(context)
-                                          .primaryBtnText,
-                                      size: 30,
-                                    ),
-                                    onPressed: () {
-                                      print('IconButton pressed ...');
-                                    },
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(20, 30, 20, 0),
+                        padding:
+                            const EdgeInsetsDirectional.fromSTEB(30, 30, 30, 0),
                         child: StreamBuilder(
                             stream: _PositionDataStream,
                             builder: (context, snapshot) {
@@ -240,8 +332,8 @@ class _SongoverviewWidgetState extends State<SongoverviewWidget> {
                                 barHeight: 4,
                                 baseBarColor: Colors.grey,
                                 bufferedBarColor: Colors.grey,
-                                progressBarColor: Color(0xFF0685CE),
-                                thumbColor: Color(0xFF0685CE),
+                                progressBarColor: const Color(0xFF0685CE),
+                                thumbColor: const Color(0xFF0685CE),
                                 timeLabelTextStyle: const TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w600,
@@ -283,7 +375,7 @@ class Controls extends StatelessWidget {
   @override
   Widget build(Object context) {
     return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
+      padding: const EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -292,21 +384,19 @@ class Controls extends StatelessWidget {
             borderRadius: 30,
             borderWidth: 1,
             buttonSize: 60,
-            icon: Icon(
+            icon: const Icon(
               Icons.shuffle,
               color: Color(0xFF4E5D75),
               size: 30,
             ),
-            onPressed: () {
-              print('IconButton pressed ...');
-            },
+            onPressed: () {},
           ),
           FlutterFlowIconButton(
             borderColor: Colors.transparent,
             borderRadius: 30,
             borderWidth: 1,
             buttonSize: 60,
-            icon: FaIcon(
+            icon: const FaIcon(
               FontAwesomeIcons.angleDoubleLeft,
               color: Colors.white,
               size: 30,
@@ -327,7 +417,7 @@ class Controls extends StatelessWidget {
                     borderRadius: 30,
                     borderWidth: 1,
                     buttonSize: 80,
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.play_circle_fill_outlined,
                       color: Color(0xFF0685CE),
                       size: 60,
@@ -340,7 +430,7 @@ class Controls extends StatelessWidget {
                     borderRadius: 30,
                     borderWidth: 1,
                     buttonSize: 80,
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.pause_circle_filled_outlined,
                       color: Color(0xFF0685CE),
                       size: 60,
@@ -359,7 +449,7 @@ class Controls extends StatelessWidget {
             borderRadius: 30,
             borderWidth: 1,
             buttonSize: 60,
-            icon: FaIcon(
+            icon: const FaIcon(
               FontAwesomeIcons.angleDoubleRight,
               color: Colors.white,
               size: 30,
@@ -373,14 +463,12 @@ class Controls extends StatelessWidget {
             borderRadius: 30,
             borderWidth: 1,
             buttonSize: 60,
-            icon: Icon(
+            icon: const Icon(
               Icons.repeat,
               color: Color(0xFF4E5D75),
               size: 30,
             ),
-            onPressed: () {
-              print('IconButton pressed ...');
-            },
+            onPressed: () {},
           ),
         ],
       ),
@@ -407,8 +495,68 @@ class MediaMetadata extends StatelessWidget {
   final String artist;
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [],
-    );
+    return Column(children: [
+      Padding(
+          padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+          child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsetsDirectional.fromSTEB(0, 70, 0, 0),
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(boxShadow: const [
+                      BoxShadow(
+                        color: Colors.black12,
+                        offset: Offset(2, 4),
+                        blurRadius: 4,
+                      )
+                    ], borderRadius: BorderRadius.circular(10)),
+                    child: CachedNetworkImage(
+                      imageUrl: "https://picsum.photos/seed/205/600",
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      height: MediaQuery.of(context).size.height * 0.3,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                Align(
+                    alignment: const AlignmentDirectional(0, 0),
+                    child: Padding(
+                        padding:
+                            const EdgeInsetsDirectional.fromSTEB(0, 60, 0, 0),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Column(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Text(
+                                  title,
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyText1
+                                      .override(
+                                        fontFamily: 'Poppins',
+                                        color: FlutterFlowTheme.of(context)
+                                            .primaryBtnText,
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                ),
+                                Text(
+                                  artist,
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyText1
+                                      .override(
+                                        fontFamily: 'Poppins',
+                                        color: const Color(0xFF565A5E),
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        )))
+              ]))
+    ]);
   }
 }

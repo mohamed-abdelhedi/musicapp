@@ -1,35 +1,45 @@
 import 'dart:developer';
 import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'package:musicapp/bottomappbar.dart';
-import 'package:musicapp/provider/song_model_provider.dart';
 import 'package:musicapp/songoverview.dart';
 import 'package:on_audio_query/on_audio_query.dart';
+import 'package:uri_to_file/uri_to_file.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:provider/provider.dart';
 
-class PlaylistWidget extends StatefulWidget {
-  const PlaylistWidget({Key? key}) : super(key: key);
+class localplaylisttWidget extends StatefulWidget {
+  const localplaylisttWidget({Key? key}) : super(key: key);
 
   @override
-  _PlaylistWidgetState createState() => _PlaylistWidgetState();
+  _localplaylisttWidgetState createState() => _localplaylisttWidgetState();
 }
 
-class _PlaylistWidgetState extends State<PlaylistWidget> {
+class _localplaylisttWidgetState extends State<localplaylisttWidget> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _unfocusNode = FocusNode();
   final OnAudioQuery _audioQuery = OnAudioQuery();
   final AudioPlayer _audioPlayer = AudioPlayer();
 
   List<SongModel> allSongs = <SongModel>[];
-
+  bool _isPlayerContorlsWidgetVisible = false;
   @override
   void initState() {
     super.initState();
     requestPermission();
+  }
+
+  playsong(String? uri) {
+    try {
+      _audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(uri!)));
+      _audioPlayer.play();
+    } on Exception {
+      log("error parsing song");
+    }
   }
 
   requestPermission() async {
@@ -46,6 +56,12 @@ class _PlaylistWidgetState extends State<PlaylistWidget> {
   void dispose() {
     _unfocusNode.dispose();
     super.dispose();
+  }
+
+  void changePlayerControlsWidgetVisibility() {
+    setState(() {
+      _isPlayerContorlsWidgetVisible = !_isPlayerContorlsWidgetVisible;
+    });
   }
 
   Widget songsListView() {
@@ -75,12 +91,22 @@ class _PlaylistWidgetState extends State<PlaylistWidget> {
             itemCount: item.data!.length,
             itemBuilder: (context, index) {
               allSongs.addAll(item.data!);
-              return GestureDetector(
-                onTap: () {
-                  print('-----------');
-                  print(item.data!);
-                  print('-----------');
-                  context.read<SongModelProvider>().setId(item.data![index].id);
+              return InkWell(
+                onTap: () async {
+                  await _audioPlayer.setAudioSource(AudioSource.uri(
+                    Uri.parse(item.data![index].uri!),
+                    tag: MediaItem(
+                      // Specify a unique ID for each media item:
+                      id: '1',
+                      // Metadata to display in the notification:
+                      album: item.data![index].artist,
+                      title: item.data![index].displayName,
+                      artUri: Uri.parse('https://picsum.photos/seed/204/600'),
+                    ),
+                  ));
+
+                  //playsong(item.data![index].uri);
+                  // ignore: use_build_context_synchronously
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -92,42 +118,26 @@ class _PlaylistWidgetState extends State<PlaylistWidget> {
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(20, 0, 10, 0),
-                      child: Image.network(
-                        'https://picsum.photos/seed/204/600',
-                        width: MediaQuery.of(context).size.width * 0.15,
-                        height: MediaQuery.of(context).size.height * 0.07,
-                        fit: BoxFit.cover,
+                      padding:
+                          const EdgeInsetsDirectional.fromSTEB(20, 0, 10, 0),
+                      child: Icon(
+                        Icons.music_note_sharp,
+                        size: MediaQuery.of(context).size.width * 0.07,
+                        color: const Color(0xFF0685CE),
                       ),
                     ),
-                    Column(
-                      mainAxisSize: MainAxisSize.max,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          item.data!.elementAt(index).displayName,
-                          style:
-                              FlutterFlowTheme.of(context).bodyText1.override(
-                                    fontFamily: 'Poppins',
-                                    color: FlutterFlowTheme.of(context)
-                                        .primaryBackground,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                        ),
-                        Text(
-                          "${item.data!.elementAt(index).artist}",
-                          style:
-                              FlutterFlowTheme.of(context).bodyText1.override(
-                                    fontFamily: 'Poppins',
-                                    color: Color(0xFF40444A),
-                                    fontSize: 15,
-                                  ),
-                        ),
-                      ],
+                    Text(
+                      item.data!.elementAt(index).displayName,
+                      style: FlutterFlowTheme.of(context).bodyText1.override(
+                            fontFamily: 'Poppins',
+                            color:
+                                FlutterFlowTheme.of(context).primaryBackground,
+                            fontWeight: FontWeight.w600,
+                          ),
                     ),
                     Expanded(
                       child: Align(
-                        alignment: AlignmentDirectional(0.9, 0),
+                        alignment: const AlignmentDirectional(0.9, 0),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.end,
@@ -177,7 +187,7 @@ class _PlaylistWidgetState extends State<PlaylistWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
         key: scaffoldKey,
-        backgroundColor: Color(0xFF25282C),
+        backgroundColor: const Color(0xFF25282C),
         body: SingleChildScrollView(
           child: SafeArea(
             child: GestureDetector(
@@ -187,23 +197,23 @@ class _PlaylistWidgetState extends State<PlaylistWidget> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Align(
-                    alignment: AlignmentDirectional(0, 0),
+                    alignment: const AlignmentDirectional(0, 0),
                     child: Container(
                       width: MediaQuery.of(context).size.width,
                       height: MediaQuery.of(context).size.height * 0.91,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         color: Color(0xFF25282C),
                       ),
-                      alignment: AlignmentDirectional(0, 0),
+                      alignment: const AlignmentDirectional(0, 0),
                       child: Column(
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Align(
-                            alignment: AlignmentDirectional(0, -0.75),
+                            alignment: const AlignmentDirectional(0, -0.75),
                             child: Container(
                               width: MediaQuery.of(context).size.width,
                               height: MediaQuery.of(context).size.height * 0.15,
-                              decoration: BoxDecoration(
+                              decoration: const BoxDecoration(
                                 color: Color(0xFF244975),
                                 borderRadius: BorderRadius.only(
                                   bottomLeft: Radius.circular(32),
@@ -236,8 +246,8 @@ class _PlaylistWidgetState extends State<PlaylistWidget> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            0, 40, 0, 0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(0, 40, 0, 0),
                                         child: Text(
                                           'Favorite Tracks',
                                           style: FlutterFlowTheme.of(context)
@@ -258,7 +268,7 @@ class _PlaylistWidgetState extends State<PlaylistWidget> {
                                             .bodyText1
                                             .override(
                                               fontFamily: 'Poppins',
-                                              color: Color(0xFF557294),
+                                              color: const Color(0xFF557294),
                                               fontSize: 15,
                                             ),
                                       ),
@@ -266,12 +276,13 @@ class _PlaylistWidgetState extends State<PlaylistWidget> {
                                   ),
                                   Expanded(
                                     child: Align(
-                                      alignment: AlignmentDirectional(0.65, 0),
+                                      alignment:
+                                          const AlignmentDirectional(0.65, 0),
                                       child: FlutterFlowIconButton(
                                         borderColor: Colors.transparent,
                                         borderRadius: 0,
                                         buttonSize: 70,
-                                        icon: Icon(
+                                        icon: const Icon(
                                           Icons.play_circle_fill,
                                           color: Color(0xFF0685CE),
                                           size: 60,
@@ -288,8 +299,8 @@ class _PlaylistWidgetState extends State<PlaylistWidget> {
                           ),
                           Expanded(
                             child: Padding(
-                              padding:
-                                  EdgeInsetsDirectional.fromSTEB(0, 30, 0, 0),
+                              padding: const EdgeInsetsDirectional.fromSTEB(
+                                  0, 30, 0, 0),
                               child: Container(
                                   width: MediaQuery.of(context).size.width,
                                   height:
@@ -311,6 +322,84 @@ class _PlaylistWidgetState extends State<PlaylistWidget> {
             ),
           ),
         ),
-        bottomNavigationBar: bottomappbarCustom());
+        bottomNavigationBar: const bottomappbarCustom());
+  }
+}
+
+class MediaMetadata extends StatelessWidget {
+  const MediaMetadata({
+    super.key,
+    required this.imageUrl,
+    required this.title,
+    required this.artist,
+  });
+  final String imageUrl;
+  final String title;
+  final String artist;
+  @override
+  Widget build(BuildContext context) {
+    return Column(children: [
+      Padding(
+          padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+          child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsetsDirectional.fromSTEB(0, 70, 0, 0),
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(boxShadow: const [
+                      BoxShadow(
+                        color: Colors.black12,
+                        offset: Offset(2, 4),
+                        blurRadius: 4,
+                      )
+                    ], borderRadius: BorderRadius.circular(10)),
+                    child: CachedNetworkImage(
+                      imageUrl: "https://picsum.photos/seed/205/600",
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      height: MediaQuery.of(context).size.height * 0.3,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                Align(
+                    alignment: const AlignmentDirectional(0, 0),
+                    child: Padding(
+                        padding:
+                            const EdgeInsetsDirectional.fromSTEB(0, 60, 0, 0),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Column(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Text(
+                                  'title',
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyText1
+                                      .override(
+                                        fontFamily: 'Poppins',
+                                        color: FlutterFlowTheme.of(context)
+                                            .primaryBtnText,
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                ),
+                                Text(
+                                  'artist',
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyText1
+                                      .override(
+                                        fontFamily: 'Poppins',
+                                        color: const Color(0xFF565A5E),
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        )))
+              ]))
+    ]);
   }
 }
