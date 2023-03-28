@@ -81,12 +81,12 @@ class _PlaylistWidgetState extends State<PlaylistWidget> {
                   print(item.data!);
                   print('-----------');
                   context.read<SongModelProvider>().setId(item.data![index].id);
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => SongoverviewWidget(
-                              songModelList: [item.data![index]],
-                              player: _audioPlayer)));
+                  // Navigator.push(
+                  //     context,
+                  //     MaterialPageRoute(
+                  //         builder: (context) => SongoverviewWidget(
+                  //             songModelList: [item.data![index]],
+                  //             player: _audioPlayer)));
                 },
                 child: Row(
                   mainAxisSize: MainAxisSize.max,

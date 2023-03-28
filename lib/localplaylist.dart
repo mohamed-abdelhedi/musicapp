@@ -86,13 +86,16 @@ class _localplaylisttWidgetState extends State<localplaylisttWidget> {
             ),
           ));
         }
-
+        List<SongModel> songs = item.data!;
         return ListView.builder(
             itemCount: item.data!.length,
             itemBuilder: (context, index) {
               allSongs.addAll(item.data!);
               return InkWell(
                 onTap: () async {
+                  print('--------------');
+                  print('_songModelList[index]');
+                  print('--------------');
                   await _audioPlayer.setAudioSource(AudioSource.uri(
                     Uri.parse(item.data![index].uri!),
                     tag: MediaItem(
@@ -107,12 +110,16 @@ class _localplaylisttWidgetState extends State<localplaylisttWidget> {
 
                   //playsong(item.data![index].uri);
                   // ignore: use_build_context_synchronously
+                  _audioPlayer.play();
+                  // ignore: use_build_context_synchronously
                   Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => SongoverviewWidget(
-                              songModelList: [item.data![index]],
-                              player: _audioPlayer)));
+                                songModelList: songs,
+                                index: index,
+                                player: _audioPlayer,
+                              )));
                 },
                 child: Row(
                   mainAxisSize: MainAxisSize.max,

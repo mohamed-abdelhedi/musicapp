@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:musicapp/provider/song_model_provider.dart';
@@ -14,12 +15,17 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:audio_session/audio_session.dart';
 
 class SongoverviewWidget extends StatefulWidget {
   const SongoverviewWidget(
-      {Key? key, required this.songModelList, required this.player})
+      {Key? key,
+      required this.songModelList,
+      required this.index,
+      required this.player})
       : super(key: key);
   final List<SongModel> songModelList;
+  final int index;
   final AudioPlayer player;
 
   @override
@@ -28,6 +34,7 @@ class SongoverviewWidget extends StatefulWidget {
 
 class _SongoverviewWidgetState extends State<SongoverviewWidget> {
   late AudioPlayer _audioPlayer = AudioPlayer();
+  late AudioPlayer _audioPlayerall = AudioPlayer();
   Duration _duration = const Duration();
   Duration _position = const Duration();
   double? sliderValue;
@@ -151,6 +158,7 @@ class _SongoverviewWidgetState extends State<SongoverviewWidget> {
   // ]);
 
   late List<SongModel> _songModelList = [];
+  late int index;
 
   // void loadSongs() {
   //   // Load songs from a data source
@@ -165,27 +173,27 @@ class _SongoverviewWidgetState extends State<SongoverviewWidget> {
   //     log("error parsing song");
   //   }
   // }
-
-  @override
+  List<AudioSource> playlist = [];
+  // @override
   void initState() {
     super.initState();
 
-    _audioPlayer = widget.player;
+    index = widget.index;
     _songModelList = widget.songModelList;
+    _audioPlayer = widget.player;
+    _audioPlayerall = widget.player;
 
-    print('-------------');
-    print(_audioPlayer);
-    print(_songModelList[0]);
-    print('-------------');
     _init();
     WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
 
   Future<void> _init() async {
-    String uri = _songModelList[0].uri!;
-
-    String album = _songModelList[0].artist ?? '';
-    String artUri = _songModelList[0].displayName;
+    String uri = _songModelList[index].uri!;
+    String album = _songModelList[index].artist ?? '';
+    String artUri = _songModelList[index].displayName;
+    print('--------------');
+    log(_songModelList[index].toString());
+    print('--------------');
 
     await _audioPlayer.setAudioSource(AudioSource.uri(
       Uri.parse(uri),
@@ -198,8 +206,33 @@ class _SongoverviewWidgetState extends State<SongoverviewWidget> {
         artUri: Uri.parse('https://picsum.photos/seed/204/600'),
       ),
     ));
-    // await _audioPlayer.setLoopMode(LoopMode.all);
-    // await _audioPlayer.setAudioSource(audioSource);
+
+    for (int i = 0; i < _songModelList.length; i++) {
+      playlist.add(AudioSource.uri(
+        Uri.parse(_songModelList[i].uri!),
+        tag: MediaItem(
+          // Specify a unique ID for each media item:
+          id: i.toString(),
+          // Metadata to display in the notification:
+          artist: _songModelList[i].artist,
+          title: _songModelList[i].displayName,
+          artUri: Uri.parse('https://picsum.photos/seed/204/600'),
+        ),
+      ));
+    }
+    log(playlist.toString());
+    final _playlist = ConcatenatingAudioSource(children: playlist);
+
+    await _audioPlayerall.setLoopMode(LoopMode.all);
+    await _audioPlayerall.setAudioSource(_playlist);
+  }
+
+  void playprevious() {
+    if (index - 1 < 0) {
+      _audioPlayer.setAudioSource(playlist[index - 1]);
+      index = index - 1;
+      _audioPlayer.play();
+    }
   }
 
   @override
@@ -312,9 +345,7 @@ class _SongoverviewWidgetState extends State<SongoverviewWidget> {
                             }
                             final metadata =
                                 state!.currentSource!.tag as MediaItem;
-                            print('--------------');
-                            log(metadata.toString());
-                            print('--------------');
+
                             return MediaMetadata(
                               imageUrl: 'https://picsum.photos/seed/205/600',
                               artist: metadata.artist ?? '',
@@ -402,7 +433,7 @@ class Controls extends StatelessWidget {
               size: 30,
             ),
             onPressed: () {
-              audioPlayer.seekToPrevious;
+              audioPlayer.seekToPrevious();
             },
           ),
           StreamBuilder<PlayerState>(

@@ -58,6 +58,7 @@ dependencies:
   permission_handler: ^10.2.0
   uri_to_file: ^0.2.0
   audio_service: ^0.18.9
+  audio_session: ^0.1.13
 
 dev_dependencies:
   flutter_test:
