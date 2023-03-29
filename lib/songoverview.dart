@@ -20,11 +20,11 @@ import 'package:audio_session/audio_session.dart';
 class SongoverviewWidget extends StatefulWidget {
   const SongoverviewWidget(
       {Key? key,
-      required this.songModelList,
+      required this.playlist,
       required this.index,
       required this.player})
       : super(key: key);
-  final List<SongModel> songModelList;
+  final List<AudioSource> playlist;
   final int index;
   final AudioPlayer player;
 
@@ -45,6 +45,22 @@ class _SongoverviewWidgetState extends State<SongoverviewWidget> {
 
   void popBack() {
     Navigator.pop(context);
+  }
+
+  void playprevious() {
+    if (index - 1 >= 0) {
+      log((index - 1).toString());
+      _audioPlayer.setAudioSource(playlist[index - 1]);
+      _audioPlayer.play();
+    }
+  }
+
+  void playnext() {
+    if (index + 1 <= playlist.length) {
+      log((index + 1).toString());
+      _audioPlayer.setAudioSource(playlist[index + 1]);
+      _audioPlayer.play();
+    }
   }
 
   void seekToSeconds(int seconds) {
@@ -157,7 +173,6 @@ class _SongoverviewWidgetState extends State<SongoverviewWidget> {
   //   ),
   // ]);
 
-  late List<SongModel> _songModelList = [];
   late int index;
 
   // void loadSongs() {
@@ -179,61 +194,30 @@ class _SongoverviewWidgetState extends State<SongoverviewWidget> {
     super.initState();
 
     index = widget.index;
-    _songModelList = widget.songModelList;
+    playlist = widget.playlist;
     _audioPlayer = widget.player;
     _audioPlayerall = widget.player;
 
-    _init();
     WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
 
-  Future<void> _init() async {
-    String uri = _songModelList[index].uri!;
-    String album = _songModelList[index].artist ?? '';
-    String artUri = _songModelList[index].displayName;
-    print('--------------');
-    log(_songModelList[index].toString());
-    print('--------------');
+  // Future<void> _init() async {
+  //   String uri = playlist[index].uri!;
+  //   String album = _songModelList[index].artist ?? '';
+  //   String artUri = _songModelList[index].displayName;
 
-    await _audioPlayer.setAudioSource(AudioSource.uri(
-      Uri.parse(uri),
-      tag: MediaItem(
-        // Specify a unique ID for each media item:
-        id: '1',
-        // Metadata to display in the notification:
-        album: album,
-        title: artUri,
-        artUri: Uri.parse('https://picsum.photos/seed/204/600'),
-      ),
-    ));
-
-    for (int i = 0; i < _songModelList.length; i++) {
-      playlist.add(AudioSource.uri(
-        Uri.parse(_songModelList[i].uri!),
-        tag: MediaItem(
-          // Specify a unique ID for each media item:
-          id: i.toString(),
-          // Metadata to display in the notification:
-          artist: _songModelList[i].artist,
-          title: _songModelList[i].displayName,
-          artUri: Uri.parse('https://picsum.photos/seed/204/600'),
-        ),
-      ));
-    }
-    log(playlist.toString());
-    final _playlist = ConcatenatingAudioSource(children: playlist);
-
-    await _audioPlayerall.setLoopMode(LoopMode.all);
-    await _audioPlayerall.setAudioSource(_playlist);
-  }
-
-  void playprevious() {
-    if (index - 1 < 0) {
-      _audioPlayer.setAudioSource(playlist[index - 1]);
-      index = index - 1;
-      _audioPlayer.play();
-    }
-  }
+  //   await _audioPlayer.setAudioSource(AudioSource.uri(
+  //     Uri.parse(uri),
+  //     tag: MediaItem(
+  //       // Specify a unique ID for each media item:
+  //       id: '1',
+  //       // Metadata to display in the notification:
+  //       album: album,
+  //       title: artUri,
+  //       artUri: Uri.parse('https://picsum.photos/seed/204/600'),
+  //     ),
+  //   ));
+  // }
 
   @override
   void dispose() {
@@ -347,7 +331,7 @@ class _SongoverviewWidgetState extends State<SongoverviewWidget> {
                                 state!.currentSource!.tag as MediaItem;
 
                             return MediaMetadata(
-                              imageUrl: 'https://picsum.photos/seed/205/600',
+                              imageUrl: 'assets/images/musicartwork.png',
                               artist: metadata.artist ?? '',
                               title: metadata.title,
                             );
@@ -381,9 +365,130 @@ class _SongoverviewWidgetState extends State<SongoverviewWidget> {
                       const SizedBox(
                         height: 20,
                       ),
-                      Controls(
-                        audioPlayer: _audioPlayer,
-                      ),
+                      Padding(
+                        padding:
+                            const EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            FlutterFlowIconButton(
+                              borderColor: Colors.transparent,
+                              borderRadius: 30,
+                              borderWidth: 1,
+                              buttonSize: 60,
+                              icon: const Icon(
+                                Icons.shuffle,
+                                color: Color(0xFF4E5D75),
+                                size: 30,
+                              ),
+                              onPressed: () {},
+                            ),
+                            FlutterFlowIconButton(
+                              borderColor: Colors.transparent,
+                              borderRadius: 30,
+                              borderWidth: 1,
+                              buttonSize: 60,
+                              icon: const FaIcon(
+                                FontAwesomeIcons.angleDoubleLeft,
+                                color: Colors.white,
+                                size: 30,
+                              ),
+                              onPressed: () {
+                                playprevious();
+                                if (index - 1 >= -1) {
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              SongoverviewWidget(
+                                                playlist: playlist,
+                                                index: index - 1,
+                                                player: _audioPlayer,
+                                              )));
+                                }
+                              },
+                            ),
+                            StreamBuilder<PlayerState>(
+                                stream: _audioPlayer.playerStateStream,
+                                builder: (context, snapshot) {
+                                  final playerState = snapshot.data;
+                                  final processingState =
+                                      playerState?.processingState;
+                                  final playing = playerState?.playing;
+                                  if (!(playing ?? false)) {
+                                    return FlutterFlowIconButton(
+                                      borderColor: Colors.transparent,
+                                      borderRadius: 30,
+                                      borderWidth: 1,
+                                      buttonSize: 80,
+                                      icon: const Icon(
+                                        Icons.play_circle_fill_outlined,
+                                        color: Color(0xFF0685CE),
+                                        size: 60,
+                                      ),
+                                      onPressed: _audioPlayer.play,
+                                    );
+                                  } else if (processingState !=
+                                      ProcessingState.completed) {
+                                    return FlutterFlowIconButton(
+                                      borderColor: Colors.transparent,
+                                      borderRadius: 30,
+                                      borderWidth: 1,
+                                      buttonSize: 80,
+                                      icon: const Icon(
+                                        Icons.pause_circle_filled_outlined,
+                                        color: Color(0xFF0685CE),
+                                        size: 60,
+                                      ),
+                                      onPressed: _audioPlayer.pause,
+                                    );
+                                  }
+                                  return const Icon(
+                                    Icons.play_circle_fill_outlined,
+                                    color: Color(0xFF0685CE),
+                                    size: 60,
+                                  );
+                                }),
+                            FlutterFlowIconButton(
+                              borderColor: Colors.transparent,
+                              borderRadius: 30,
+                              borderWidth: 1,
+                              buttonSize: 60,
+                              icon: const FaIcon(
+                                FontAwesomeIcons.angleDoubleRight,
+                                color: Colors.white,
+                                size: 30,
+                              ),
+                              onPressed: () {
+                                playnext();
+                                if (index + 1 <= playlist.length + 1) {
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              SongoverviewWidget(
+                                                playlist: playlist,
+                                                index: index + 1,
+                                                player: _audioPlayer,
+                                              )));
+                                }
+                              },
+                            ),
+                            FlutterFlowIconButton(
+                              borderColor: Colors.transparent,
+                              borderRadius: 30,
+                              borderWidth: 1,
+                              buttonSize: 60,
+                              icon: const Icon(
+                                Icons.repeat,
+                                color: Color(0xFF4E5D75),
+                                size: 30,
+                              ),
+                              onPressed: () {},
+                            ),
+                          ],
+                        ),
+                      )
                     ],
                   ),
                 ),
@@ -400,8 +505,17 @@ class Controls extends StatelessWidget {
   const Controls({
     super.key,
     required this.audioPlayer,
+    required this.index,
   });
   final AudioPlayer audioPlayer;
+  final int index;
+  // void playprevious() {
+  //   if (index - 1 < 0) {
+  //     // List<AudioSource> playlist = _SongoverviewWidgetState().returnplaylist();
+  //     audioPlayer.setAudioSource(playlist[index - 1]);
+  //     audioPlayer.play();
+  //   }
+  // }
 
   @override
   Widget build(Object context) {
@@ -433,7 +547,7 @@ class Controls extends StatelessWidget {
               size: 30,
             ),
             onPressed: () {
-              audioPlayer.seekToPrevious();
+              //playprevious();
             },
           ),
           StreamBuilder<PlayerState>(
@@ -534,21 +648,11 @@ class MediaMetadata extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(0, 70, 0, 0),
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black12,
-                        offset: Offset(2, 4),
-                        blurRadius: 4,
-                      )
-                    ], borderRadius: BorderRadius.circular(10)),
-                    child: CachedNetworkImage(
-                      imageUrl: "https://picsum.photos/seed/205/600",
-                      width: MediaQuery.of(context).size.width * 0.8,
-                      height: MediaQuery.of(context).size.height * 0.3,
-                      fit: BoxFit.cover,
-                    ),
+                  padding: const EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
+                  child: Image(
+                    image: AssetImage("assets/images/musicartwork.png"),
+                    width: MediaQuery.of(context).size.width * 0.8,
+                    fit: BoxFit.cover,
                   ),
                 ),
                 Align(

@@ -42,6 +42,26 @@ class _localplaylisttWidgetState extends State<localplaylisttWidget> {
     }
   }
 
+  List<AudioSource> playlist = [];
+  List<AudioSource> returnplaylist(_songModelList) {
+    for (int i = 0; i < _songModelList.length; i++) {
+      playlist.add(AudioSource.uri(
+        Uri.parse(_songModelList[i].uri!),
+        tag: MediaItem(
+          // Specify a unique ID for each media item:
+          id: i.toString(),
+          // Metadata to display in the notification:
+          artist: _songModelList[i].artist,
+          title: _songModelList[i].displayName,
+          artUri: Uri.parse('assets/images/musicartwork.png'),
+        ),
+      ));
+    }
+    final _playlist = ConcatenatingAudioSource(children: playlist);
+
+    return playlist;
+  }
+
   requestPermission() async {
     if (Platform.isAndroid) {
       bool permissionStatus = await _audioQuery.permissionsStatus();
@@ -102,8 +122,8 @@ class _localplaylisttWidgetState extends State<localplaylisttWidget> {
                       // Specify a unique ID for each media item:
                       id: '1',
                       // Metadata to display in the notification:
-                      album: item.data![index].artist,
-                      title: item.data![index].displayName,
+                      album: item.data![index].artist ?? 'unknown',
+                      title: item.data![index].title,
                       artUri: Uri.parse('https://picsum.photos/seed/204/600'),
                     ),
                   ));
@@ -116,7 +136,7 @@ class _localplaylisttWidgetState extends State<localplaylisttWidget> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => SongoverviewWidget(
-                                songModelList: songs,
+                                playlist: returnplaylist(songs),
                                 index: index,
                                 player: _audioPlayer,
                               )));

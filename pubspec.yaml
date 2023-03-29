@@ -59,6 +59,7 @@ dependencies:
   uri_to_file: ^0.2.0
   audio_service: ^0.18.9
   audio_session: ^0.1.13
+  hive_flutter: ^1.1.0
 
 dev_dependencies:
   flutter_test:
