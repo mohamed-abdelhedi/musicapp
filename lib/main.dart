@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import 'package:musicapp/SearchScreen.dart';
 import 'package:musicapp/localplaylist.dart';
+import 'package:musicapp/provider/SearchProvider.dart';
+import 'package:musicapp/provider/SearchScreens/SongsSearch.dart';
 import 'package:musicapp/provider/song_model_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:musicapp/searchfunction.dart';
+import 'package:musicapp/songsearch.dart';
 import 'package:provider/provider.dart';
 
 Future main() async {
@@ -13,10 +19,17 @@ Future main() async {
     androidNotificationChannelName: 'Audio playback',
     androidNotificationOngoing: true,
   );
-  runApp(ChangeNotifierProvider(
-    create: (context) => SongModelProvider(),
-    child: const MyApp(),
-  ));
+  await Hive.initFlutter();
+  await Hive.openBox('myfavourites');
+  await Hive.openBox('settings');
+  await Hive.openBox('search_history');
+  await Hive.openBox('song_history');
+  await Hive.openBox('downloads');
+
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(create: (context) => SongModelProvider()),
+    ChangeNotifierProvider(create: (_) => SearchProvider()),
+  ], child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -40,6 +53,6 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
         ),
         debugShowCheckedModeBanner: false,
-        home: localplaylisttWidget());
+        home: SearchfunctionCopyWidget());
   }
 }
