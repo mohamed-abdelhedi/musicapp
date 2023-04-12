@@ -4,7 +4,7 @@ import 'dart:developer';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart';
 
-import '../Models/HomeModel.dart';
+import '../../Models/HomeModel.dart';
 
 Box box = Hive.box('settings');
 

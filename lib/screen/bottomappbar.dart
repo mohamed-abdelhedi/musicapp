@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
-import 'flutter_flow/flutter_flow_icon_button.dart';
-import 'flutter_flow/flutter_flow_theme.dart';
+import '../flutter_flow/flutter_flow_icon_button.dart';
+import '../flutter_flow/flutter_flow_theme.dart';
 
 class bottomappbarCustom extends StatefulWidget {
   const bottomappbarCustom({super.key});

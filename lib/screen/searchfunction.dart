@@ -1,7 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:musicapp/PlaylistSearch.dart';
-import 'package:musicapp/bottomappbar.dart';
+import 'package:musicapp/provider/SearchScreens/ArtistsSearch.dart';
+import 'package:musicapp/provider/SearchScreens/PlaylistSearch.dart';
+import 'package:musicapp/screen/bottomappbar.dart';
 import 'package:musicapp/provider/SearchProvider.dart';
 import 'package:musicapp/provider/SearchScreens/SongsSearch.dart';
 import 'package:musicapp/services/YTMusic/ytmusic.dart';
@@ -10,20 +13,19 @@ import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import 'package:provider/provider.dart';
 
-class SearchfunctionCopyWidget extends StatefulWidget {
-  const SearchfunctionCopyWidget({Key? key}) : super(key: key);
+class SearchfunctionWidget extends StatefulWidget {
+  const SearchfunctionWidget({Key? key}) : super(key: key);
 
   @override
-  _SearchfunctionCopyWidgetState createState() =>
-      _SearchfunctionCopyWidgetState();
+  _SearchfunctionWidgetState createState() => _SearchfunctionWidgetState();
 }
 
-class _SearchfunctionCopyWidgetState extends State<SearchfunctionCopyWidget>
+class _SearchfunctionWidgetState extends State<SearchfunctionWidget>
     with
-        AutomaticKeepAliveClientMixin<SearchfunctionCopyWidget>,
+        AutomaticKeepAliveClientMixin<SearchfunctionWidget>,
         TickerProviderStateMixin {
   TextEditingController? textController;
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -39,7 +41,7 @@ class _SearchfunctionCopyWidgetState extends State<SearchfunctionCopyWidget>
   void initState() {
     super.initState();
     tabController = TabController(
-      length: 2,
+      length: 3,
       vsync: this,
     )..addListener(() {
         setState(() {});
@@ -56,6 +58,7 @@ class _SearchfunctionCopyWidgetState extends State<SearchfunctionCopyWidget>
         if (mounted) {
           setState(() {
             suggestions = value;
+            log(value.toString());
           });
         }
       });
@@ -176,7 +179,7 @@ class _SearchfunctionCopyWidgetState extends State<SearchfunctionCopyWidget>
                         ),
                         Expanded(
                           child: DefaultTabController(
-                            length: 2,
+                            length: 3,
                             initialIndex: 0,
                             child: Column(
                               children: [
@@ -238,6 +241,30 @@ class _SearchfunctionCopyWidgetState extends State<SearchfunctionCopyWidget>
                                         ),
                                       ),
                                     ),
+                                    Tab(
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16, vertical: 8),
+                                        decoration: BoxDecoration(
+                                          color: tabController?.index == 2
+                                              ? Theme.of(context)
+                                                  .colorScheme
+                                                  .primary
+                                              : Colors.transparent,
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                        ),
+                                        child: Text(
+                                          'Playlist',
+                                          style: tabController?.index == 2
+                                              ? Theme.of(context)
+                                                  .primaryTextTheme
+                                                  .displaySmall
+                                              : TextStyle(
+                                                  color: Color(0xFF0685CE)),
+                                        ),
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ],
@@ -246,22 +273,19 @@ class _SearchfunctionCopyWidgetState extends State<SearchfunctionCopyWidget>
                         ),
                         Expanded(
                           child: submitted
-                              ? Column(
-                                  children: [
-                                    Expanded(
-                                      child: TabBarView(
-                                        controller: tabController,
-                                        children: [
-                                          SongsSearch(
-                                              query:
-                                                  textEditingController.text),
-                                          PlaylistSearch(
-                                              query: textEditingController.text)
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                )
+                              ? Expanded(
+                                  child: TabBarView(
+                                    //controller: tabController,
+                                    children: [
+                                      SongsSearch(
+                                          query: textEditingController.text),
+                                      ArtistsSearch(
+                                          query: textEditingController.text),
+                                      PlaylistSearch(
+                                          query: textEditingController.text),
+                                    ],
+                                  ),
+                                ) //provide search suggestions and history
                               : ValueListenableBuilder(
                                   valueListenable:
                                       Hive.box('settings').listenable(),
@@ -271,6 +295,7 @@ class _SearchfunctionCopyWidgetState extends State<SearchfunctionCopyWidget>
                                       itemCount: suggestions.length,
                                       itemBuilder: (context, index) {
                                         String e = suggestions[index];
+
                                         return ListTile(
                                           enableFeedback: false,
                                           contentPadding:

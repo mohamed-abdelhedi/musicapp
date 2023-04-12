@@ -67,6 +67,7 @@ class SearchProvider extends ChangeNotifier {
         _artists = jsonDecode(jsonEncode(value));
         _artistsLoaded = true;
         notifyListeners();
+        log(query.toString());
       });
     }
   }
