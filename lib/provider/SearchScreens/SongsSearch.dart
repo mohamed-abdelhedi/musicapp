@@ -10,6 +10,7 @@ import 'package:musicapp/flutter_flow/flutter_flow_theme.dart';
 import 'package:musicapp/helper/snackbar.dart';
 import 'package:musicapp/screen/player_service.dart';
 import 'package:musicapp/screen/songoverview.dart';
+import 'package:musicapp/screen/songoverviewonline.dart';
 import 'package:musicapp/services/YTMusic/yt_music.dart';
 import 'package:musicapp/services/youtube_services.dart';
 import 'package:on_audio_query/on_audio_query.dart';
@@ -56,15 +57,22 @@ class _SongsSearchState extends State<SongsSearch> {
   // String uri(songId) {
   //   return getMusicVideo(songId).toString();
   // }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     Logger.root.info('calling youtube search');
     YouTubeServices().fetchSearchResults(widget.query).then((value) {
-      setState(() {
-        searchedList = value;
-        fetched = true;
-      });
+      if (mounted) {
+        setState(() {
+          searchedList = value;
+          fetched = true;
+        });
+      }
     });
     return SingleChildScrollView(
       padding: const EdgeInsets.only(
@@ -170,12 +178,13 @@ class _SongsSearchState extends State<SongsSearch> {
                           ),
                         ));
                         _audioPlayer.play();
+
                         // ignore: use_build_context_synchronously
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => SongoverviewWidget(
-                                      playlist: [],
+                                builder: (context) => SongoverviewWidgetonline(
+                                      playlist: [section['items'][idx]],
                                       index: idx,
                                       player: _audioPlayer,
                                     )));

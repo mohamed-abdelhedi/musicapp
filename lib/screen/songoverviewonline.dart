@@ -2,8 +2,10 @@ import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import 'package:marquee/marquee.dart';
 import 'package:musicapp/provider/song_model_provider.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
@@ -17,22 +19,23 @@ import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:audio_session/audio_session.dart';
 
-class SongoverviewWidget extends StatefulWidget {
-  const SongoverviewWidget(
+class SongoverviewWidgetonline extends StatefulWidget {
+  const SongoverviewWidgetonline(
       {Key? key,
       required this.playlist,
       required this.index,
       required this.player})
       : super(key: key);
-  final List<AudioSource> playlist;
+  final List<dynamic> playlist;
   final int index;
   final AudioPlayer player;
 
   @override
-  _SongoverviewWidgetState createState() => _SongoverviewWidgetState();
+  _SongoverviewWidgetonlineState createState() =>
+      _SongoverviewWidgetonlineState();
 }
 
-class _SongoverviewWidgetState extends State<SongoverviewWidget> {
+class _SongoverviewWidgetonlineState extends State<SongoverviewWidgetonline> {
   late AudioPlayer _audioPlayer = AudioPlayer();
   late AudioPlayer _audioPlayerall = AudioPlayer();
   Duration _duration = const Duration();
@@ -188,7 +191,7 @@ class _SongoverviewWidgetState extends State<SongoverviewWidget> {
   //     log("error parsing song");
   //   }
   // }
-  List<AudioSource> playlist = [];
+  List<dynamic> playlist = [];
   // @override
   void initState() {
     super.initState();
@@ -197,6 +200,7 @@ class _SongoverviewWidgetState extends State<SongoverviewWidget> {
     playlist = widget.playlist;
     _audioPlayer = widget.player;
     _audioPlayerall = widget.player;
+    log(playlist.toString());
 
     WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
@@ -331,7 +335,7 @@ class _SongoverviewWidgetState extends State<SongoverviewWidget> {
                                 state!.currentSource!.tag as MediaItem;
 
                             return MediaMetadata(
-                              imageUrl: 'assets/images/musicartwork.png',
+                              imageUrl: playlist[0]['secondImage'],
                               artist: metadata.artist ?? '',
                               title: metadata.title,
                             );
@@ -400,7 +404,7 @@ class _SongoverviewWidgetState extends State<SongoverviewWidget> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              SongoverviewWidget(
+                                              SongoverviewWidgetonline(
                                                 playlist: playlist,
                                                 index: index - 1,
                                                 player: _audioPlayer,
@@ -466,7 +470,7 @@ class _SongoverviewWidgetState extends State<SongoverviewWidget> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              SongoverviewWidget(
+                                              SongoverviewWidgetonline(
                                                 playlist: playlist,
                                                 index: index + 1,
                                                 player: _audioPlayer,
@@ -629,7 +633,7 @@ class PositionData {
 }
 
 class MediaMetadata extends StatelessWidget {
-  const MediaMetadata({
+  MediaMetadata({
     super.key,
     required this.imageUrl,
     required this.title,
@@ -638,6 +642,7 @@ class MediaMetadata extends StatelessWidget {
   final String imageUrl;
   final String title;
   final String artist;
+
   @override
   Widget build(BuildContext context) {
     return Column(children: [
@@ -649,8 +654,8 @@ class MediaMetadata extends StatelessWidget {
               children: [
                 Padding(
                   padding: const EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
-                  child: Image(
-                    image: AssetImage("assets/images/musicartwork.png"),
+                  child: CachedNetworkImage(
+                    imageUrl: imageUrl,
                     width: MediaQuery.of(context).size.width * 0.8,
                     fit: BoxFit.cover,
                   ),
@@ -666,17 +671,21 @@ class MediaMetadata extends StatelessWidget {
                             Column(
                               mainAxisSize: MainAxisSize.max,
                               children: [
-                                Text(
-                                  title,
-                                  style: FlutterFlowTheme.of(context)
-                                      .bodyText1
-                                      .override(
-                                        fontFamily: 'Poppins',
-                                        color: FlutterFlowTheme.of(context)
-                                            .primaryBtnText,
-                                        fontSize: 25,
-                                        fontWeight: FontWeight.w600,
-                                      ),
+                                SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.8,
+                                  child: Text(
+                                    title,
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodyText1
+                                        .override(
+                                          fontFamily: 'Poppins',
+                                          color: FlutterFlowTheme.of(context)
+                                              .primaryBtnText,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                  ),
                                 ),
                                 Text(
                                   artist,
