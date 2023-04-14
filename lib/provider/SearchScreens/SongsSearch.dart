@@ -7,14 +7,12 @@ import 'package:just_audio_background/just_audio_background.dart';
 import 'package:logging/logging.dart';
 import 'package:musicapp/flutter_flow/flutter_flow_icon_button.dart';
 import 'package:musicapp/flutter_flow/flutter_flow_theme.dart';
-import 'package:musicapp/helper/snackbar.dart';
-import 'package:musicapp/screen/player_service.dart';
-import 'package:musicapp/screen/songoverview.dart';
+
 import 'package:musicapp/screen/songoverviewonline.dart';
-import 'package:musicapp/services/YTMusic/yt_music.dart';
+
 import 'package:musicapp/services/youtube_services.dart';
 import 'package:on_audio_query/on_audio_query.dart';
-import 'package:provider/provider.dart';
+
 import 'package:musicapp/provider/SearchProvider.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 // import 'package:musicapp/widgets/TrackTile.dart';
@@ -100,6 +98,7 @@ class _SongsSearchState extends State<SongsSearch> {
                   shrinkWrap: true,
                   itemCount: (section['items'] as List).length,
                   itemBuilder: (context, idx) {
+                    //log(section['title'].toString());
                     final itemType =
                         section['items'][idx]['type']?.toString() ?? 'Video';
 
@@ -136,6 +135,7 @@ class _SongsSearchState extends State<SongsSearch> {
                         child: CachedNetworkImage(
                           fit: BoxFit.cover,
                           errorWidget: (context, url, error) {
+                            print(section['items'][idx]['secondImage']);
                             // If the URL is the one causing the error, return a default image widget
                             if (url ==
                                 'https://img.youtube.com/vi/gCYcHz2k5x0/maxresdefault.jpg') {

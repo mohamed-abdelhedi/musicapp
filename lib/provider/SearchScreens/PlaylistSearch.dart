@@ -1,7 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import 'package:musicapp/provider/SearchProvider.dart';
+import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 class PlaylistSearch extends StatefulWidget {
   const PlaylistSearch({this.query = "", super.key});
@@ -14,11 +16,24 @@ class _PlaylistSearchState extends State<PlaylistSearch> {
   @override
   void initState() {
     super.initState();
+    log('-------');
+    searchplaylist();
+  }
+
+  Future<List> searchplaylist() async {
+    var youtube = new YoutubeExplode();
+
+    var videos = await youtube.search.searchContent(widget.query);
+
+    var playlists = videos
+        .where((result) => result is SearchPlaylist)
+        .cast<SearchPlaylist>()
+        .toList();
+    return playlists;
   }
 
   @override
   Widget build(BuildContext context) {
-    context.read<SearchProvider>().searchPlaylists(widget.query);
     return !context.watch<SearchProvider>().playlistsLoaded
         ? const Center(child: CircularProgressIndicator())
         : ListView.builder(
@@ -26,6 +41,8 @@ class _PlaylistSearchState extends State<PlaylistSearch> {
             itemCount: context.watch<SearchProvider>().playlists.length,
             itemBuilder: (context, index) {
               Map playlist = context.watch<SearchProvider>().playlists[index];
+              log(playlist.toString());
+              print(playlist);
               return ListTile(
                 enableFeedback: false,
                 onTap: () {

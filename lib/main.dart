@@ -1,38 +1,18 @@
-import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:logging/logging.dart';
-import 'package:musicapp/helper/logging.dart';
 import 'package:musicapp/provider/SearchProvider.dart';
-
+import 'package:musicapp/provider/SearchScreens/PlaylistSearch.dart';
+import 'package:musicapp/provider/SearchScreens/playist.dart';
 import 'package:musicapp/provider/song_model_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:musicapp/screen/localplaylist.dart';
-import 'package:musicapp/screen/player_service.dart';
-import 'package:musicapp/screen/tabbar.dart';
+import 'package:musicapp/screen/playlistOnline.dart';
+import 'package:musicapp/screen/searchList.dart';
 import 'package:musicapp/screen/welcoming.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
-
-// Future<void> startService() async {
-//   await initializeLogging();
-//   final AudioPlayerHandler audioHandler = await AudioService.init(
-//     builder: () => AudioPlayerHandlerImpl(),
-//     config: AudioServiceConfig(
-//       androidNotificationChannelId: 'com.shadow.blackhole.channel.audio',
-//       androidNotificationChannelName: 'BlackHole',
-//       androidNotificationIcon: 'drawable/ic_stat_music_note',
-//       androidShowNotificationBadge: true,
-//       androidStopForegroundOnPause: false,
-//       // Hive.box('settings').get('stopServiceOnPause', defaultValue: true) as bool,
-//       notificationColor: Colors.grey[900],
-//     ),
-//   );
-//   GetIt.I.registerSingleton<AudioPlayerHandler>(audioHandler);
-// }
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -90,6 +70,8 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
         ),
         debugShowCheckedModeBanner: false,
-        home: searchList());
+        home: playlistonlinetWidget(
+          playlistID: 'PLQJFeTuwahNU8N7Gcqiqsk1gA-hlNkQ2q',
+        ));
   }
 }

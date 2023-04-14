@@ -1,19 +1,15 @@
-import 'dart:developer';
-
 import 'package:flutter/cupertino.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:musicapp/provider/SearchProvider.dart';
 import 'package:musicapp/provider/SearchScreens/ArtistsSearch.dart';
 import 'package:musicapp/provider/SearchScreens/PlaylistSearch.dart';
 import 'package:musicapp/provider/SearchScreens/SongsSearch.dart';
+import 'package:musicapp/provider/SearchScreens/playist.dart';
 import 'package:musicapp/screen/bottomappbar.dart';
 import 'package:musicapp/services/YTMusic/ytmusic.dart';
-
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
-import '/flutter_flow/flutter_flow_util.dart';
 import 'package:flutter/material.dart';
-
 import 'package:provider/provider.dart';
 
 class searchList extends StatefulWidget {
@@ -225,7 +221,7 @@ class _searchListState extends State<searchList>
                                           ArtistsSearch(
                                               query:
                                                   textEditingController.text),
-                                          PlaylistSearch(
+                                          playlistsearch(
                                               query:
                                                   textEditingController.text),
                                         ],
