@@ -10,14 +10,14 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:provider/provider.dart';
 
-class HomePageCopyWidget extends StatefulWidget {
-  const HomePageCopyWidget({Key? key}) : super(key: key);
+class HomePageWidget extends StatefulWidget {
+  const HomePageWidget({Key? key}) : super(key: key);
 
   @override
-  _HomePageCopyWidgetState createState() => _HomePageCopyWidgetState();
+  _HomePageWidgetState createState() => _HomePageWidgetState();
 }
 
-class _HomePageCopyWidgetState extends State<HomePageCopyWidget> {
+class _HomePageWidgetState extends State<HomePageWidget> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _unfocusNode = FocusNode();
 

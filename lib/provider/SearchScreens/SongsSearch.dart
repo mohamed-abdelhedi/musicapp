@@ -1,6 +1,8 @@
 import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_debounce/easy_debounce.dart';
+import 'package:easy_debounce/easy_throttle.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -64,13 +66,18 @@ class _SongsSearchState extends State<SongsSearch> {
   @override
   Widget build(BuildContext context) {
     Logger.root.info('calling youtube search');
-    YouTubeServices().fetchSearchResults(widget.query).then((value) {
-      if (mounted) {
-        setState(() {
-          searchedList = value;
-          fetched = true;
-        });
-      }
+    EasyThrottle.throttle(
+        'my-debouncer', // <-- An ID for this particular debouncer
+        Duration(milliseconds: 2000), // <-- The debounce duration
+        () {
+      YouTubeServices().fetchSearchResults(widget.query).then((value) {
+        if (mounted) {
+          setState(() {
+            searchedList = value;
+            fetched = true;
+          });
+        }
+      });
     });
     return SingleChildScrollView(
       padding: const EdgeInsets.only(
@@ -98,7 +105,6 @@ class _SongsSearchState extends State<SongsSearch> {
                   shrinkWrap: true,
                   itemCount: (section['items'] as List).length,
                   itemBuilder: (context, idx) {
-                    //log(section['title'].toString());
                     final itemType =
                         section['items'][idx]['type']?.toString() ?? 'Video';
 
@@ -135,7 +141,6 @@ class _SongsSearchState extends State<SongsSearch> {
                         child: CachedNetworkImage(
                           fit: BoxFit.cover,
                           errorWidget: (context, url, error) {
-                            print(section['items'][idx]['secondImage']);
                             // If the URL is the one causing the error, return a default image widget
                             if (url ==
                                 'https://img.youtube.com/vi/gCYcHz2k5x0/maxresdefault.jpg') {
@@ -173,8 +178,8 @@ class _SongsSearchState extends State<SongsSearch> {
                             id: section['items'][idx]['id'],
                             album: section['items'][idx]['album'],
                             title: section['items'][idx]['title'],
-                            artUri:
-                                Uri.parse(section['items'][idx]['secondImage']),
+                            artUri: Uri.parse(section['items'][idx]['image'] ??
+                                section['items'][idx]['secondImage']),
                           ),
                         ));
                         _audioPlayer.play();

@@ -1,5 +1,5 @@
-import 'package:musicapp/screen/signin.dart';
-import 'package:musicapp/screen/signup.dart';
+import 'package:musicapp/screen/login/signin.dart';
+import 'package:musicapp/screen/login/signup.dart';
 
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';

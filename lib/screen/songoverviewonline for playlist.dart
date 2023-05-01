@@ -20,8 +20,8 @@ import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:audio_session/audio_session.dart';
 
-class SongoverviewWidgetonline extends StatefulWidget {
-  const SongoverviewWidgetonline(
+class SongoverviewWidgetonlinep extends StatefulWidget {
+  const SongoverviewWidgetonlinep(
       {Key? key,
       required this.playlist,
       required this.index,
@@ -32,11 +32,11 @@ class SongoverviewWidgetonline extends StatefulWidget {
   final AudioPlayer player;
 
   @override
-  _SongoverviewWidgetonlineState createState() =>
-      _SongoverviewWidgetonlineState();
+  _SongoverviewWidgetonlinepState createState() =>
+      _SongoverviewWidgetonlinepState();
 }
 
-class _SongoverviewWidgetonlineState extends State<SongoverviewWidgetonline> {
+class _SongoverviewWidgetonlinepState extends State<SongoverviewWidgetonlinep> {
   late AudioPlayer _audioPlayer = AudioPlayer();
   late AudioPlayer _audioPlayerall = AudioPlayer();
   Duration _duration = const Duration();
@@ -54,15 +54,14 @@ class _SongoverviewWidgetonlineState extends State<SongoverviewWidgetonline> {
   var yt = YoutubeExplode();
   Future playprevious() async {
     if (index - 1 >= 0) {
-      log((index - 1).toString());
       var video = await yt.videos
           .get('https://youtube.com/watch?v=${playlist[index - 1].id}');
       final manifest =
           await yt.videos.streamsClient.getManifest(playlist[index - 1].id);
       String songurl = await manifest.muxed.last.url.toString();
-      log(songurl.toString());
+
       String imgurl =
-          'https://img.youtube.com/vi/${playlist[index - 1].id}/hqdefault.jpg';
+          'https://img.youtube.com/vi/${playlist[index - 1].id}/maxresdefault.jpg';
       AudioSource song = AudioSource.uri(
         Uri.parse(songurl),
         tag: MediaItem(
@@ -70,26 +69,25 @@ class _SongoverviewWidgetonlineState extends State<SongoverviewWidgetonline> {
           id: '1',
           // Metadata to display in the notification:
           album: 'fffff',
-          title: playlist[index].title,
+          title: playlist[index - 1].title,
           artUri: Uri.parse(imgurl),
         ),
       );
-      _audioPlayer.setAudioSource(playlist[index - 1]);
+      _audioPlayer.setAudioSource(song);
       _audioPlayer.play();
     }
   }
 
   Future playnext() async {
     if (index + 1 <= playlist.length) {
-      log((index + 1).toString());
       var video = await yt.videos
           .get('https://youtube.com/watch?v=${playlist[index + 1].id}');
       final manifest =
           await yt.videos.streamsClient.getManifest(playlist[index + 1].id);
       String songurl = await manifest.muxed.last.url.toString();
-      log(songurl.toString());
+
       String imgurl =
-          'https://img.youtube.com/vi/${playlist[index + 1].id}/hqdefault.jpg';
+          'https://img.youtube.com/vi/${playlist[index + 1].id}/maxresdefault.jpg';
       AudioSource song = AudioSource.uri(
         Uri.parse(songurl),
         tag: MediaItem(
@@ -97,11 +95,11 @@ class _SongoverviewWidgetonlineState extends State<SongoverviewWidgetonline> {
           id: '1',
           // Metadata to display in the notification:
           album: 'fffff',
-          title: playlist[index].title,
+          title: playlist[index + 1].title,
           artUri: Uri.parse(imgurl),
         ),
       );
-      _audioPlayer.setAudioSource(playlist[index + 1]);
+      _audioPlayer.setAudioSource(song);
       _audioPlayer.play();
     }
   }
@@ -240,7 +238,6 @@ class _SongoverviewWidgetonlineState extends State<SongoverviewWidgetonline> {
     playlist = widget.playlist;
     _audioPlayer = widget.player;
     _audioPlayerall = widget.player;
-    log(playlist.toString());
 
     WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
@@ -375,7 +372,8 @@ class _SongoverviewWidgetonlineState extends State<SongoverviewWidgetonline> {
                                 state!.currentSource!.tag as MediaItem;
 
                             return MediaMetadata(
-                              imageUrl: playlist[0]['secondImage'],
+                              imageUrl:
+                                  'https://img.youtube.com/vi/${playlist[index].id}/maxresdefault.jpg',
                               artist: metadata.artist ?? '',
                               title: metadata.title,
                             );
@@ -437,19 +435,19 @@ class _SongoverviewWidgetonlineState extends State<SongoverviewWidgetonline> {
                                 color: Colors.white,
                                 size: 30,
                               ),
-                              onPressed: () {
-                                // playprevious();
-                                // if (index - 1 >= -1) {
-                                //   Navigator.pushReplacement(
-                                //       context,
-                                //       MaterialPageRoute(
-                                //           builder: (context) =>
-                                //               SongoverviewWidgetonline(
-                                //                 playlist: playlist,
-                                //                 index: index - 1,
-                                //                 player: _audioPlayer,
-                                //               )));
-                                // }
+                              onPressed: () async {
+                                playprevious();
+                                if (index - 1 >= -1) {
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              SongoverviewWidgetonlinep(
+                                                playlist: playlist,
+                                                index: index - 1,
+                                                player: _audioPlayer,
+                                              )));
+                                }
                               },
                             ),
                             StreamBuilder<PlayerState>(
@@ -503,19 +501,19 @@ class _SongoverviewWidgetonlineState extends State<SongoverviewWidgetonline> {
                                 color: Colors.white,
                                 size: 30,
                               ),
-                              onPressed: () {
-                                // playnext();
-                                // if (index + 1 <= playlist.length + 1) {
-                                //   Navigator.pushReplacement(
-                                //       context,
-                                //       MaterialPageRoute(
-                                //           builder: (context) =>
-                                //               SongoverviewWidgetonline(
-                                //                 playlist: playlist,
-                                //                 index: index + 1,
-                                //                 player: _audioPlayer,
-                                //               )));
-                                // }
+                              onPressed: () async {
+                                playnext();
+                                if (index + 1 <= playlist.length + 1) {
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              SongoverviewWidgetonlinep(
+                                                playlist: playlist,
+                                                index: index + 1,
+                                                player: _audioPlayer,
+                                              )));
+                                }
                               },
                             ),
                             FlutterFlowIconButton(

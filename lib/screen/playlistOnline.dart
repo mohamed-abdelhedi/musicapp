@@ -1,10 +1,14 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_image/flutter_image.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import 'package:marquee/marquee.dart';
 import 'package:musicapp/screen/bottomappbar.dart';
 import 'package:musicapp/screen/songoverview.dart';
+import 'package:musicapp/screen/songoverviewonline%20for%20playlist.dart';
+import 'package:musicapp/screen/songoverviewonline.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:uri_to_file/uri_to_file.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
@@ -14,9 +18,10 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class playlistonlinetWidget extends StatefulWidget {
-  const playlistonlinetWidget({Key? key, required this.playlistID})
+  const playlistonlinetWidget({Key? key, required this.playlist, this.title})
       : super(key: key);
-  final String playlistID;
+  final playlist;
+  final title;
   @override
   _playlistonlinetWidgetState createState() => _playlistonlinetWidgetState();
 }
@@ -27,7 +32,8 @@ class _playlistonlinetWidgetState extends State<playlistonlinetWidget> {
   final OnAudioQuery _audioQuery = OnAudioQuery();
   final AudioPlayer _audioPlayer = AudioPlayer();
 
-  late String playlistID = widget.playlistID;
+  late final playlist = widget.playlist;
+  late final title = widget.title;
 
   bool _isPlayerContorlsWidgetVisible = false;
   @override
@@ -45,38 +51,39 @@ class _playlistonlinetWidgetState extends State<playlistonlinetWidget> {
   }
 
   var yt = YoutubeExplode();
-  Future<List<Video>> Getplaylist() async {
-    var videos = await yt.playlists.getVideos(playlistID);
+  // Future<List<Video>> Getplaylist() async {
+  //   var videos = await yt.playlists.getVideos(playlistID);
+  //   log(videos.toList().toString());
 
-    return videos.toList();
-  }
+  //   return videos.toList();
+  // }
+/* this fonction took so much time to load list of videos */
+  // Future<List<Map>> convertvideotoaudio() async {
+  //   List<Video> videos = await Getplaylist();
+  //   List<Map> allsongs = [];
+  //   for (int i = 0; i < videos.length; i++) {
+  //     var video =
+  //         await yt.videos.get('https://youtube.com/watch?v=${videos[i].id}');
+  //     final manifest = await yt.videos.streamsClient.getManifest(videos[i].id);
+  //     String songurl = manifest.muxed.last.url.toString();
+  //     String imgurl =
+  //         'https://img.youtube.com/vi/${videos[i].id}/hqdefault.jpg';
 
-  Future<List<Map>> convertvideotoaudio() async {
-    List<Video> videos = await Getplaylist();
-    List<Map> allsongs = [];
-    for (int i = 0; i < videos.length; i++) {
-      var video =
-          await yt.videos.get('https://youtube.com/watch?v=${videos[i].id}');
-      final manifest = await yt.videos.streamsClient.getManifest(videos[i].id);
-      String songurl = manifest.muxed.last.url.toString();
-      String imgurl =
-          'https://img.youtube.com/vi/${videos[i].id}/hqdefault.jpg';
+  //     allsongs.addAll([
+  //       {
+  //         'id': videos[i].id,
+  //         'title': video.title,
+  //         'duration': video.duration,
+  //         'url': songurl,
+  //         'imgurl': imgurl,
+  //       }
+  //     ]);
+  //   }
 
-      allsongs.addAll([
-        {
-          'id': videos[i].id,
-          'title': video.title,
-          'duration': video.duration,
-          'url': songurl,
-          'imgurl': imgurl,
-        }
-      ]);
-    }
+  //   return allsongs;
+  // }
 
-    return allsongs;
-  }
-
-  List<AudioSource> playlist = [];
+  // List<AudioSource> playlist = [];
   List<AudioSource> returnplaylist(_songModelList) {
     for (int i = 0; i < _songModelList.length; i++) {
       playlist.add(AudioSource.uri(
@@ -103,117 +110,143 @@ class _playlistonlinetWidgetState extends State<playlistonlinetWidget> {
   }
 
   Widget songsListView() {
-    return FutureBuilder(
-      future: Getplaylist(),
-      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-        if (snapshot.data == null) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-        var songs = snapshot.data!;
-        print(songs);
-        return ListView.builder(
-            itemCount: snapshot.data!.length,
-            itemBuilder: (context, index) {
-              return InkWell(
-                onTap: () async {
-                  // await _audioPlayer.setAudioSource(AudioSource.uri(
-                  //   Uri.parse(item.data![index].uri!),
-                  //   tag: MediaItem(
-                  //     // Specify a unique ID for each media item:
-                  //     id: '1',
-                  //     // Metadata to display in the notification:
-                  //     album: songs.title  ?? 'unknown',
-                  //     title: item.data![index].title,
-                  //     artUri: Uri.parse('https://picsum.photos/seed/204/600'),
-                  //   ),
-                  // ));
+    return ListView.builder(
+        itemCount: playlist.length,
+        itemBuilder: (context, index) {
+          Duration duration = playlist[index].duration;
 
-                  //playsong(item.data![index].uri);
-                  // ignore: use_build_context_synchronously
-                  _audioPlayer.play();
-                  // ignore: use_build_context_synchronously
-                  // Navigator.push(
-                  //     context,
-                  //     MaterialPageRoute(
-                  //         builder: (context) => SongoverviewWidget(
-                  //               playlist: returnplaylist(songs),
-                  //               index: index,
-                  //               player: _audioPlayer,
-                  //             )));
-                },
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Padding(
-                        padding:
-                            const EdgeInsetsDirectional.fromSTEB(20, 0, 10, 0),
-                        child: Icon(
-                          Icons.music_note_sharp,
-                          size: MediaQuery.of(context).size.width * 0.07,
-                          color: const Color(0xFF0685CE),
-                        ),
+          return InkWell(
+            onTap: () async {
+              var video = await yt.videos
+                  .get('https://youtube.com/watch?v=${playlist[index].id}');
+              final manifest =
+                  await yt.videos.streamsClient.getManifest(playlist[index].id);
+              String songurl = manifest.muxed.last.url.toString();
+              log(songurl.toString());
+              String imgurl =
+                  'https://img.youtube.com/vi/${playlist[index].id}/hqdefault.jpg';
+              await _audioPlayer.setAudioSource(AudioSource.uri(
+                Uri.parse(songurl),
+                tag: MediaItem(
+                  // Specify a unique ID for each media item:
+                  id: '1',
+                  // Metadata to display in the notification:
+                  album: 'fffff',
+                  title: playlist[index].title,
+                  artUri: Uri.parse(imgurl),
+                ),
+              ));
+              _audioPlayer.play();
+              // ignore: use_build_context_synchronously
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => SongoverviewWidgetonlinep(
+                            playlist: playlist,
+                            index: index,
+                            player: _audioPlayer,
+                          )));
+            },
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width * 0.8,
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Padding(
+                      padding:
+                          const EdgeInsetsDirectional.fromSTEB(20, 0, 10, 0),
+                      child: FadeInImage(
+                        image: NetworkImage(
+                            'https://img.youtube.com/vi/${playlist[index].id}/hqdefault.jpg'),
+                        placeholder:
+                            AssetImage("assets/images/musicartwork.png"),
+                        imageErrorBuilder: (context, error, stackTrace) {
+                          return Image.asset("assets/images/musicartwork.png",
+                              fit: BoxFit.fitWidth);
+                        },
+                        fit: BoxFit.fitWidth,
+                        width: MediaQuery.of(context).size.width * 0.15,
+                      )
+                      // CachedNetworkImage(
+                      //   imageUrl:
+                      //       'https://img.youtube.com/vi/${playlist[index].id}/maxresdefault.jpg' ??
+                      //           'https://img.youtube.com/vi/${playlist[index].id}/hqdefault.jpg',
+                      //   width: MediaQuery.of(context).size.width * 0.2,
+                      //   fit: BoxFit.cover,
+                      // ),
                       ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.4,
-                        child: Text(
-                          songs[index].title,
-                          style:
-                              FlutterFlowTheme.of(context).bodyText1.override(
-                                    fontFamily: 'Poppins',
-                                    color: FlutterFlowTheme.of(context)
-                                        .primaryBackground,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 8,
-                                  ),
+                  SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.5,
+                      height: MediaQuery.of(context).size.width * 0.05,
+                      child: Marquee(
+                        text:
+                            ' ${playlist[index].title}                                            ',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
+                        scrollAxis: Axis.horizontal,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        blankSpace: 20.0,
+                        velocity: 50.0,
+                        pauseAfterRound: Duration(seconds: 7),
+                        startPadding: 10.0,
+                        accelerationDuration: Duration(seconds: 3),
+                        accelerationCurve: Curves.linear,
+                        decelerationDuration: Duration(milliseconds: 500),
+                        decelerationCurve: Curves.easeOut,
+                      )
+                      // Text(
+                      //   playlist[index].title,
+                      //   style: FlutterFlowTheme.of(context).bodyText1.override(
+                      //         fontFamily: 'Poppins',
+                      //         color:
+                      //             FlutterFlowTheme.of(context).primaryBackground,
+                      //         fontWeight: FontWeight.w600,
+                      //         fontSize: 8,
+                      //       ),
+                      // ),
                       ),
-                      Expanded(
-                        child: Align(
-                          alignment: const AlignmentDirectional(0.9, 0),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Text(
-                                songs[index].duration.toString(),
-                                style: FlutterFlowTheme.of(context)
-                                    .bodyText1
-                                    .override(
+                  Expanded(
+                    child: Align(
+                      alignment: const AlignmentDirectional(0.9, 0),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            '${duration.inMinutes}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}',
+                            style:
+                                FlutterFlowTheme.of(context).bodyText1.override(
                                       fontFamily: 'Poppins',
                                       color: FlutterFlowTheme.of(context)
                                           .primaryBtnText,
                                     ),
-                              ),
-                              FlutterFlowIconButton(
-                                borderColor: Colors.transparent,
-                                borderRadius: 30,
-                                borderWidth: 1,
-                                buttonSize: 60,
-                                icon: Icon(
-                                  Icons.drag_handle,
-                                  color: FlutterFlowTheme.of(context)
-                                      .primaryBackground,
-                                  size: 30,
-                                ),
-                                onPressed: () {
-                                  print('IconButton pressed ...');
-                                },
-                              ),
-                            ],
                           ),
-                        ),
+                          FlutterFlowIconButton(
+                            borderColor: Colors.transparent,
+                            borderRadius: 30,
+                            borderWidth: 1,
+                            buttonSize: 60,
+                            icon: Icon(
+                              Icons.drag_handle,
+                              color: FlutterFlowTheme.of(context)
+                                  .primaryBackground,
+                              size: 30,
+                            ),
+                            onPressed: () {
+                              print('IconButton pressed ...');
+                            },
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
-              );
-            });
-      },
-    );
+                ],
+              ),
+            ),
+          );
+        });
   }
 
   @override
@@ -279,24 +312,57 @@ class _playlistonlinetWidgetState extends State<playlistonlinetWidget> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Padding(
-                                        padding: const EdgeInsetsDirectional
-                                            .fromSTEB(0, 40, 0, 0),
-                                        child: Text(
-                                          'Favorite Tracks',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyText1
-                                              .override(
-                                                fontFamily: 'Poppins',
-                                                color:
-                                                    FlutterFlowTheme.of(context)
-                                                        .primaryBtnText,
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(0, 40, 0, 0),
+                                          child: SizedBox(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.55,
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.035,
+                                            child: Marquee(
+                                              text:
+                                                  '${title}                   ',
+                                              style: const TextStyle(
+                                                color: Colors.white,
                                                 fontSize: 20,
                                                 fontWeight: FontWeight.w600,
                                               ),
-                                        ),
-                                      ),
+                                              scrollAxis: Axis.horizontal,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              blankSpace: 20.0,
+                                              velocity: 25.0,
+                                              pauseAfterRound:
+                                                  Duration(seconds: 5),
+                                              startPadding: 10.0,
+                                              accelerationDuration:
+                                                  Duration(seconds: 1),
+                                              accelerationCurve: Curves.linear,
+                                              decelerationDuration:
+                                                  Duration(seconds: 2),
+                                              decelerationCurve: Curves.easeOut,
+                                            ),
+                                          )
+                                          //  Text(
+                                          //   title,
+                                          //   style: FlutterFlowTheme.of(context)
+                                          //       .bodyText1
+                                          //       .override(
+                                          //         fontFamily: 'Poppins',
+                                          //         color:
+                                          //             FlutterFlowTheme.of(context)
+                                          //                 .primaryBtnText,
+                                          //         fontSize: 20,
+                                          //         fontWeight: FontWeight.w600,
+                                          //       ),
+                                          // ),
+                                          ),
                                       Text(
-                                        '11 songs',
+                                        playlist.length.toString(),
                                         style: FlutterFlowTheme.of(context)
                                             .bodyText1
                                             .override(
@@ -310,7 +376,7 @@ class _playlistonlinetWidgetState extends State<playlistonlinetWidget> {
                                   Expanded(
                                     child: Align(
                                       alignment:
-                                          const AlignmentDirectional(0.65, 0),
+                                          const AlignmentDirectional(0.2, 0),
                                       child: FlutterFlowIconButton(
                                         borderColor: Colors.transparent,
                                         borderRadius: 0,
@@ -392,7 +458,7 @@ class MediaMetadata extends StatelessWidget {
                       imageUrl: "https://picsum.photos/seed/205/600",
                       width: MediaQuery.of(context).size.width * 0.8,
                       height: MediaQuery.of(context).size.height * 0.3,
-                      fit: BoxFit.cover,
+                      fit: BoxFit.contain,
                     ),
                   ),
                 ),

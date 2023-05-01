@@ -26,9 +26,8 @@ class _playlistsearchState extends State<playlistsearch> {
     searchplaylist();
   }
 
+  var youtube = new YoutubeExplode();
   Future<List> searchplaylist() async {
-    var youtube = new YoutubeExplode();
-
     var videos = await youtube.search.searchContent(widget.query);
 
     var playlists = videos
@@ -49,18 +48,20 @@ class _playlistsearchState extends State<playlistsearch> {
               return ListView.builder(
                 itemCount: snapshot.data!.length,
                 itemBuilder: (BuildContext context, int index) {
-                  log(snapshot.data.toString());
                   return SingleChildScrollView(
                     child: InkWell(
                       onTap: () async {
+                        var videos = await youtube.playlists
+                            .getVideos(snapshot.data![index].playlistId)
+                            .toList();
+
                         Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => playlistonlinetWidget(
-                                      playlistID: snapshot
-                                          .data![index].playlistId
-                                          .toString(),
-                                    )));
+                                    playlist: videos,
+                                    title: snapshot.data![index].playlistTitle
+                                        .toString())));
                       },
                       child: ListTile(
                         title: Text(
@@ -104,6 +105,7 @@ class _playlistsearchState extends State<playlistsearch> {
                             },
                             imageUrl: snapshot.data![index].thumbnails[0].url
                                 .toString(),
+
                             // imageUrl: section['items'][idx]['image'],
                             placeholder: (
                               context,

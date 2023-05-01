@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:musicapp/provider/SearchProvider.dart';
 import 'package:musicapp/provider/SearchScreens/ArtistsSearch.dart';
-import 'package:musicapp/provider/SearchScreens/PlaylistSearch.dart';
+
 import 'package:musicapp/provider/SearchScreens/SongsSearch.dart';
 import 'package:musicapp/provider/SearchScreens/playist.dart';
 import 'package:musicapp/screen/bottomappbar.dart';
@@ -142,7 +142,7 @@ class _searchListState extends State<searchList>
                                             const AlignmentDirectional(0, 0),
                                         child: TextFormField(
                                           controller: textEditingController,
-                                          autofocus: true,
+                                          // autofocus: true,
                                           obscureText: false,
                                           // ignore: prefer_const_constructors
                                           decoration: InputDecoration(
@@ -200,6 +200,7 @@ class _searchListState extends State<searchList>
                                             fontSize: 16,
                                           ),
                                       indicatorColor: const Color(0xFF244975),
+                                      // ignore: prefer_const_literals_to_create_immutables
                                       tabs: [
                                         const Tab(
                                           text: 'Songs',

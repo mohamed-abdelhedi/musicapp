@@ -3,19 +3,20 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:logging/logging.dart';
 import 'package:musicapp/provider/SearchProvider.dart';
-import 'package:musicapp/provider/SearchScreens/PlaylistSearch.dart';
-import 'package:musicapp/provider/SearchScreens/playist.dart';
 import 'package:musicapp/provider/song_model_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:musicapp/screen/playlistOnline.dart';
-import 'package:musicapp/screen/searchList.dart';
-import 'package:musicapp/screen/welcoming.dart';
+import 'package:musicapp/screen/homepage.dart';
+import 'package:musicapp/screen/login/welcoming.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  var email = preferences.getString('email');
   await Firebase.initializeApp();
   await JustAudioBackground.init(
     androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
@@ -52,26 +53,14 @@ Future main() async {
     }
   }
 
-  runApp(MultiProvider(providers: [
-    ChangeNotifierProvider(create: (context) => SongModelProvider()),
-    ChangeNotifierProvider(create: (_) => SearchProvider()),
-  ], child: const MyApp()));
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        debugShowCheckedModeBanner: false,
-        home: playlistonlinetWidget(
-          playlistID: 'PLQJFeTuwahNU8N7Gcqiqsk1gA-hlNkQ2q',
-        ));
-  }
+  runApp(MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => SongModelProvider()),
+        ChangeNotifierProvider(create: (_) => SearchProvider()),
+      ],
+      child: MaterialApp(
+          title: 'musicapp',
+          debugShowCheckedModeBanner: false,
+          //home: searchList())
+          home: email == null ? WelcomingWidget() : HomePageWidget())));
 }

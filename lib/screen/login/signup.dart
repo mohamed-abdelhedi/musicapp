@@ -1,5 +1,6 @@
-import 'package:musicapp/screen/signin.dart';
+import 'package:musicapp/screen/login/signin.dart';
 
+import '../../services/firebase/flutterfire.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -8,25 +9,30 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 
+extension StringExtensions on String {
+  bool isValidEmail() {
+    return RegExp(
+            r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
+        .hasMatch(this);
+  }
+}
+
 class SignupWidget extends StatefulWidget {
   const SignupWidget({Key? key}) : super(key: key);
-
+  static String name = '';
+  static String email = '';
+  static DateTime date = DateTime.now();
+  static String password = '';
   @override
   _SignupWidgetState createState() => _SignupWidgetState();
 }
 
 class _SignupWidgetState extends State<SignupWidget> {
-  TextEditingController? textController1;
-  String? Function(BuildContext, String?)? textController1Validator;
-  // State field(s) for TextField widget.
-  TextEditingController? textController2;
-  String? Function(BuildContext, String?)? textController2Validator;
-  // State field(s) for TextField widget.
-  TextEditingController? textController3;
+  TextEditingController? name;
+  TextEditingController? email;
+  TextEditingController? password;
   late bool passwordVisibility;
-  String? Function(BuildContext, String?)? textController3Validator;
   DateTime? datePicked;
-  // State field(s) for Checkbox widget.
   bool? checkboxValue;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -36,17 +42,17 @@ class _SignupWidgetState extends State<SignupWidget> {
   void initState() {
     super.initState();
     passwordVisibility = false;
-    textController1 ??= TextEditingController();
-    textController2 ??= TextEditingController();
-    textController3 ??= TextEditingController();
+    name ??= TextEditingController();
+    email ??= TextEditingController();
+    password ??= TextEditingController();
   }
 
   @override
   void dispose() {
     _unfocusNode.dispose();
-    textController1?.dispose();
-    textController2?.dispose();
-    textController3?.dispose();
+    name?.dispose();
+    email?.dispose();
+    password?.dispose();
     super.dispose();
   }
 
@@ -54,7 +60,7 @@ class _SignupWidgetState extends State<SignupWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: Color(0xFF25282C),
+      backgroundColor: const Color(0xFF25282C),
       body: SafeArea(
         child: GestureDetector(
           onTap: () => FocusScope.of(context).requestFocus(_unfocusNode),
@@ -63,9 +69,9 @@ class _SignupWidgetState extends State<SignupWidget> {
               mainAxisSize: MainAxisSize.max,
               children: [
                 Align(
-                  alignment: AlignmentDirectional(-0.9, 0),
+                  alignment: const AlignmentDirectional(-0.9, 0),
                   child: Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
                     child: Text(
                       'Sign Up',
                       style: FlutterFlowTheme.of(context).bodyText1.override(
@@ -78,9 +84,9 @@ class _SignupWidgetState extends State<SignupWidget> {
                   ),
                 ),
                 Align(
-                  alignment: AlignmentDirectional(-0.8, 0),
+                  alignment: const AlignmentDirectional(-0.8, 0),
                   child: Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 20),
+                    padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 20),
                     child: Text(
                       'Create account to contiune!',
                       style: FlutterFlowTheme.of(context).bodyText1.override(
@@ -91,9 +97,9 @@ class _SignupWidgetState extends State<SignupWidget> {
                   ),
                 ),
                 Align(
-                  alignment: AlignmentDirectional(-0.85, 0),
+                  alignment: const AlignmentDirectional(-0.85, 0),
                   child: Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
                     child: Text(
                       'Name',
                       style: FlutterFlowTheme.of(context).bodyText1.override(
@@ -104,11 +110,11 @@ class _SignupWidgetState extends State<SignupWidget> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
                   child: Container(
                     width: MediaQuery.of(context).size.width * 0.9,
                     child: TextFormField(
-                      controller: textController1,
+                      controller: name,
                       autofocus: true,
                       autofillHints: [AutofillHints.email],
                       obscureText: false,
@@ -116,45 +122,53 @@ class _SignupWidgetState extends State<SignupWidget> {
                         hintText: 'Enter your Name',
                         hintStyle: FlutterFlowTheme.of(context).bodyText2,
                         enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                             color: Color(0xFF4E5D75),
                             width: 3,
                           ),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                             color: Color(0xFF0685CE),
                             width: 3,
                           ),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         errorBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                             color: Color(0xFFFF0000),
                             width: 3,
                           ),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         focusedErrorBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                             color: Color(0xFFFF0000),
                             width: 3,
                           ),
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
+                      validator: (name) {
+                        if (!name!.isNotEmpty) {
+                          return 'please enter valid name';
+                        } else {
+                          SignupWidget.name = name;
+                        }
+                      },
                       style: FlutterFlowTheme.of(context).bodyText1.override(
                             fontFamily: 'Poppins',
                             color: FlutterFlowTheme.of(context).primaryBtnText,
                           ),
+                      keyboardType: TextInputType.name,
                     ),
                   ),
                 ),
                 Align(
-                  alignment: AlignmentDirectional(-0.85, 0),
+                  alignment: const AlignmentDirectional(-0.85, 0),
                   child: Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
                     child: Text(
                       'Email Address',
                       style: FlutterFlowTheme.of(context).bodyText1.override(
@@ -165,11 +179,11 @@ class _SignupWidgetState extends State<SignupWidget> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
                   child: Container(
                     width: MediaQuery.of(context).size.width * 0.9,
                     child: TextFormField(
-                      controller: textController2,
+                      controller: email,
                       autofocus: true,
                       autofillHints: [AutofillHints.email],
                       obscureText: false,
@@ -177,28 +191,28 @@ class _SignupWidgetState extends State<SignupWidget> {
                         hintText: 'Enter your email',
                         hintStyle: FlutterFlowTheme.of(context).bodyText2,
                         enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                             color: Color(0xFF4E5D75),
                             width: 3,
                           ),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                             color: Color(0xFF0685CE),
                             width: 3,
                           ),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         errorBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                             color: Color(0xFFFF0000),
                             width: 3,
                           ),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         focusedErrorBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                             color: Color(0xFFFF0000),
                             width: 3,
                           ),
@@ -209,13 +223,21 @@ class _SignupWidgetState extends State<SignupWidget> {
                             fontFamily: 'Poppins',
                             color: FlutterFlowTheme.of(context).primaryBtnText,
                           ),
+                      keyboardType: TextInputType.emailAddress,
+                      validator: (email) {
+                        if (email!.isValidEmail()) {
+                          SignupWidget.email = email;
+                        } else {
+                          return 'please enter valid name';
+                        }
+                      },
                     ),
                   ),
                 ),
                 Align(
-                  alignment: AlignmentDirectional(-0.85, 0),
+                  alignment: const AlignmentDirectional(-0.85, 0),
                   child: Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
                     child: Text(
                       'Password',
                       style: FlutterFlowTheme.of(context).bodyText1.override(
@@ -226,39 +248,44 @@ class _SignupWidgetState extends State<SignupWidget> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
                   child: Container(
                     width: MediaQuery.of(context).size.width * 0.9,
                     child: TextFormField(
-                      controller: textController3,
+                      controller: password,
+                      validator: (email) {
+                        if (password == null) {
+                          return 'please enter valid password';
+                        }
+                      },
                       autofocus: true,
                       obscureText: !passwordVisibility,
                       decoration: InputDecoration(
                         hintText: 'Enter your password',
                         hintStyle: FlutterFlowTheme.of(context).bodyText2,
                         enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                             color: Color(0xFF4E5D75),
                             width: 3,
                           ),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                             color: Color(0xFF0685CE),
                             width: 3,
                           ),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         errorBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                             color: Color(0xFFFF0000),
                             width: 3,
                           ),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         focusedErrorBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                             color: Color(0xFFFF0000),
                             width: 3,
                           ),
@@ -273,7 +300,7 @@ class _SignupWidgetState extends State<SignupWidget> {
                             passwordVisibility
                                 ? Icons.visibility_outlined
                                 : Icons.visibility_off_outlined,
-                            color: Color(0xFF757575),
+                            color: const Color(0xFF757575),
                             size: 22,
                           ),
                         ),
@@ -286,9 +313,9 @@ class _SignupWidgetState extends State<SignupWidget> {
                   ),
                 ),
                 Align(
-                  alignment: AlignmentDirectional(-0.85, 0),
+                  alignment: const AlignmentDirectional(-0.85, 0),
                   child: Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 10),
+                    padding: const EdgeInsetsDirectional.fromSTEB(0, 20, 0, 10),
                     child: Text(
                       'Birthday',
                       style: FlutterFlowTheme.of(context).bodyText1.override(
@@ -299,28 +326,29 @@ class _SignupWidgetState extends State<SignupWidget> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(20, 0, 0, 0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 0, 0),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(0, 2, 0, 0),
+                        padding:
+                            const EdgeInsetsDirectional.fromSTEB(0, 2, 0, 0),
                         child: FFButtonWidget(
                           onPressed: () async {
-                            final _datePickedDate = await showDatePicker(
+                            final datePickedDate = await showDatePicker(
                               context: context,
                               initialDate: getCurrentTimestamp,
                               firstDate: DateTime(1900),
                               lastDate: DateTime(2050),
                             );
 
-                            if (_datePickedDate != null) {
+                            if (datePickedDate != null) {
                               setState(() {
                                 datePicked = DateTime(
-                                  _datePickedDate.year,
-                                  _datePickedDate.month,
-                                  _datePickedDate.day,
+                                  datePickedDate.year,
+                                  datePickedDate.month,
+                                  datePickedDate.day,
                                 );
                               });
                             }
@@ -334,16 +362,17 @@ class _SignupWidgetState extends State<SignupWidget> {
                           options: FFButtonOptions(
                             width: 55,
                             height: 50,
-                            padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-                            iconPadding:
-                                EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
-                            color: Color(0xFF0685CE),
+                            padding: const EdgeInsetsDirectional.fromSTEB(
+                                0, 0, 0, 0),
+                            iconPadding: const EdgeInsetsDirectional.fromSTEB(
+                                5, 0, 0, 0),
+                            color: const Color(0xFF0685CE),
                             textStyle:
                                 FlutterFlowTheme.of(context).subtitle2.override(
                                       fontFamily: 'Poppins',
                                       color: Colors.white,
                                     ),
-                            borderSide: BorderSide(
+                            borderSide: const BorderSide(
                               color: Colors.transparent,
                               width: 1,
                             ),
@@ -351,10 +380,11 @@ class _SignupWidgetState extends State<SignupWidget> {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(20, 0, 0, 0),
+                        padding:
+                            const EdgeInsetsDirectional.fromSTEB(20, 0, 0, 0),
                         child: Text(
                           valueOrDefault<String>(
-                            dateTimeFormat('yMMMd', datePicked),
+                            dateTimeFormat('yyyy-MM-dd', datePicked),
                             'Your Birthday',
                           ),
                           style: FlutterFlowTheme.of(context)
@@ -372,15 +402,16 @@ class _SignupWidgetState extends State<SignupWidget> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Align(
-                        alignment: AlignmentDirectional(-0.85, 0),
+                        alignment: const AlignmentDirectional(-0.85, 0),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(20, 0, 0, 0),
+                          padding:
+                              const EdgeInsetsDirectional.fromSTEB(20, 0, 0, 0),
                           child: Theme(
                             data: ThemeData(
                               checkboxTheme: CheckboxThemeData(
@@ -388,7 +419,7 @@ class _SignupWidgetState extends State<SignupWidget> {
                                   borderRadius: BorderRadius.circular(0),
                                 ),
                               ),
-                              unselectedWidgetColor: Color(0xFFF5F5F5),
+                              unselectedWidgetColor: const Color(0xFFF5F5F5),
                             ),
                             child: Checkbox(
                               value: checkboxValue ??= false,
@@ -402,7 +433,7 @@ class _SignupWidgetState extends State<SignupWidget> {
                         ),
                       ),
                       Align(
-                        alignment: AlignmentDirectional(0, 0),
+                        alignment: const AlignmentDirectional(0, 0),
                         child: Text(
                           'I agree to terms and conditions',
                           style: FlutterFlowTheme.of(context)
@@ -418,27 +449,43 @@ class _SignupWidgetState extends State<SignupWidget> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
                   child: FFButtonWidget(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => SigninWidget()),
-                      );
+                      SignupWidget.name = name!.text;
+                      SignupWidget.password = password!.text;
+                      SignupWidget.email = email!.text;
+                      SignupWidget.date = datePicked!;
+                      register(SignupWidget.email, SignupWidget.password)
+                          .then((value) {
+                        if (value == "success") {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const SigninWidget()));
+                        } else {
+                          showDialog(
+                              context: context,
+                              builder: ((context) => AlertDialog(
+                                    content: Text(value!),
+                                  )));
+                        }
+                      });
                     },
                     text: 'Sign Up',
                     options: FFButtonOptions(
                       width: 300,
                       height: 50,
-                      padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-                      iconPadding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-                      color: Color(0xFF0685CE),
+                      padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                      iconPadding:
+                          const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                      color: const Color(0xFF0685CE),
                       textStyle:
                           FlutterFlowTheme.of(context).subtitle2.override(
                                 fontFamily: 'Poppins',
                                 color: Colors.white,
                               ),
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                         color: Colors.transparent,
                         width: 1,
                       ),
@@ -446,12 +493,13 @@ class _SignupWidgetState extends State<SignupWidget> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(20, 20, 0, 0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 0, 0),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(10, 0, 0, 0),
+                        padding:
+                            const EdgeInsetsDirectional.fromSTEB(10, 0, 0, 0),
                         child: Text(
                           'Do you have an account? ',
                           style: FlutterFlowTheme.of(context)
@@ -467,7 +515,7 @@ class _SignupWidgetState extends State<SignupWidget> {
                         'Sign In',
                         style: FlutterFlowTheme.of(context).bodyText1.override(
                               fontFamily: 'Poppins',
-                              color: Color(0xFF0685CE),
+                              color: const Color(0xFF0685CE),
                             ),
                       ),
                     ],
