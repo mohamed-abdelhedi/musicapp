@@ -4,7 +4,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:musicapp/screen/bottomappbar.dart';
-import 'package:musicapp/screen/songoverview.dart';
+import 'package:musicapp/screen/bottomappbar2.dart';
+import 'package:musicapp/screen/songoverview/songoverview.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:uri_to_file/uri_to_file.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
@@ -114,7 +115,8 @@ class _localplaylisttWidgetState extends State<localplaylisttWidget> {
               return InkWell(
                 onTap: () async {
                   print('--------------');
-                  print('_songModelList[index]');
+                  print('songModelList[index]');
+                  print(item.data!);
                   print('--------------');
                   await _audioPlayer.setAudioSource(AudioSource.uri(
                     Uri.parse(item.data![index].uri!),
@@ -349,7 +351,7 @@ class _localplaylisttWidgetState extends State<localplaylisttWidget> {
             ),
           ),
         ),
-        bottomNavigationBar: const bottomappbarCustom());
+        bottomNavigationBar: const bottomappbarCustom2());
   }
 }
 

@@ -59,6 +59,7 @@ class _playlistsearchState extends State<playlistsearch> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => playlistonlinetWidget(
+                                  id:snapshot.data![index].playlistId,
                                     playlist: videos,
                                     title: snapshot.data![index].playlistTitle
                                         .toString())));
@@ -103,8 +104,9 @@ class _playlistsearchState extends State<playlistsearch> {
                                 return Icon(Icons.error);
                               }
                             },
-                            imageUrl: snapshot.data![index].thumbnails[0].url
-                                .toString(),
+                            imageUrl: 'https://picsum.photos/seed/125/600',
+                            //snapshot.data![index].thumbnails[0].url
+                            // .toString(),
 
                             // imageUrl: section['items'][idx]['image'],
                             placeholder: (

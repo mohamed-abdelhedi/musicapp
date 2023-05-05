@@ -1,16 +1,14 @@
 import 'dart:developer';
-import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter_image/flutter_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:marquee/marquee.dart';
 import 'package:musicapp/screen/bottomappbar.dart';
-import 'package:musicapp/screen/songoverview.dart';
-import 'package:musicapp/screen/songoverviewonline%20for%20playlist.dart';
-import 'package:musicapp/screen/songoverviewonline.dart';
+import 'package:musicapp/screen/songoverview/songoverviewonline%20for%20playlist.dart';
 import 'package:on_audio_query/on_audio_query.dart';
-import 'package:uri_to_file/uri_to_file.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -18,9 +16,15 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class playlistonlinetWidget extends StatefulWidget {
-  const playlistonlinetWidget({Key? key, required this.playlist, this.title})
-      : super(key: key);
+  const playlistonlinetWidget({
+    Key? key,
+    required this.id,
+    this.playlist,
+    this.title,
+  }) : super(key: key);
+  final id;
   final playlist;
+
   final title;
   @override
   _playlistonlinetWidgetState createState() => _playlistonlinetWidgetState();
@@ -34,12 +38,14 @@ class _playlistonlinetWidgetState extends State<playlistonlinetWidget> {
 
   late final playlist = widget.playlist;
   late final title = widget.title;
-
+  bool playlist_added = false;
   bool _isPlayerContorlsWidgetVisible = false;
   @override
   void initState() {
     super.initState();
   }
+
+  final String userId = FirebaseAuth.instance.currentUser!.uid;
 
   playsong(String? uri) {
     try {
@@ -377,17 +383,26 @@ class _playlistonlinetWidgetState extends State<playlistonlinetWidget> {
                                     child: Align(
                                       alignment:
                                           const AlignmentDirectional(0.2, 0),
-                                      child: FlutterFlowIconButton(
-                                        borderColor: Colors.transparent,
-                                        borderRadius: 0,
-                                        buttonSize: 70,
-                                        icon: const Icon(
-                                          Icons.play_circle_fill,
+                                      child: IconButton(
+                                        icon: Icon(
+                                          playlist_added
+                                              ? Icons.playlist_add_check
+                                              : Icons.playlist_add,
                                           color: Color(0xFF0685CE),
-                                          size: 60,
+                                          size: 40,
                                         ),
-                                        onPressed: () {
-                                          print('IconButton pressed ...');
+                                        onPressed: () async {
+                                          setState(() {});
+                                          playlist_added = !playlist_added;
+                                          print(playlist_added);
+
+                                          print(userId);
+                                          DatabaseReference ref =
+                                              FirebaseDatabase.instance.ref(
+                                                  "Users/$userId/favoritePlaylist");
+                                          DatabaseEvent event =
+                                              await ref.once();
+                                          print(event.snapshot.value);
                                         },
                                       ),
                                     ),

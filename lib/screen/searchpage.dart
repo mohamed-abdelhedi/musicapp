@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import 'package:musicapp/screen/bottomappbar.dart';
+import 'package:musicapp/screen/bottomappbar2.dart';
 import 'package:musicapp/screen/searchList.dart';
 
 import '/flutter_flow/flutter_flow_icon_button.dart';
@@ -65,11 +67,11 @@ class _SearchpageWidgetState extends State<SearchpageWidget> {
                             padding: const EdgeInsetsDirectional.fromSTEB(
                                 0, 30, 0, 0),
                             child: Container(
-                              width: MediaQuery.of(context).size.width * 0.9,
-                              height: MediaQuery.of(context).size.height * 0.07,
+                              width: MediaQuery.of(context).size.width * 0.85,
+                              height: MediaQuery.of(context).size.height * 0.06,
                               decoration: BoxDecoration(
                                 color: const Color(0xFF2E3237),
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(20),
                               ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
@@ -91,81 +93,28 @@ class _SearchpageWidgetState extends State<SearchpageWidget> {
                                   Expanded(
                                     child: Align(
                                       alignment:
-                                          const AlignmentDirectional(0, 0),
-                                      child: Focus(
-                                        onFocusChange: (hasFocus) {
-                                          if (hasFocus) {
-                                            Navigator.pushReplacement(
+                                          const AlignmentDirectional(-1, 0),
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      searchList()),
-                                            ).then(
-                                                (_) => Navigator.pop(context));
-                                            ;
-                                          }
+                                                      const searchList()));
                                         },
-                                        child: TextFormField(
-                                          controller: textController,
+                                        child: Text(
+                                          'Search song, artist, album',
                                           //  autofocus: true,
-                                          obscureText: false,
-                                          decoration: InputDecoration(
-                                            hintText:
-                                                'Search song, artist, album',
-                                            hintStyle:
-                                                FlutterFlowTheme.of(context)
-                                                    .bodyText2,
-                                            enabledBorder:
-                                                const UnderlineInputBorder(
-                                              borderSide: BorderSide(
-                                                color: Color(0x00000000),
-                                                width: 1,
-                                              ),
-                                              borderRadius: BorderRadius.only(
-                                                topLeft: Radius.circular(4.0),
-                                                topRight: Radius.circular(4.0),
-                                              ),
-                                            ),
-                                            focusedBorder:
-                                                const UnderlineInputBorder(
-                                              borderSide: BorderSide(
-                                                color: Color(0x00000000),
-                                                width: 1,
-                                              ),
-                                              borderRadius: BorderRadius.only(
-                                                topLeft: Radius.circular(4.0),
-                                                topRight: Radius.circular(4.0),
-                                              ),
-                                            ),
-                                            errorBorder:
-                                                const UnderlineInputBorder(
-                                              borderSide: BorderSide(
-                                                color: Color(0x00000000),
-                                                width: 1,
-                                              ),
-                                              borderRadius: BorderRadius.only(
-                                                topLeft: Radius.circular(4.0),
-                                                topRight: Radius.circular(4.0),
-                                              ),
-                                            ),
-                                            focusedErrorBorder:
-                                                const UnderlineInputBorder(
-                                              borderSide: BorderSide(
-                                                color: Color(0x00000000),
-                                                width: 1,
-                                              ),
-                                              borderRadius: BorderRadius.only(
-                                                topLeft: Radius.circular(4.0),
-                                                topRight: Radius.circular(4.0),
-                                              ),
-                                            ),
-                                          ),
+
                                           style: FlutterFlowTheme.of(context)
                                               .bodyText1
                                               .override(
-                                                fontFamily: 'Open Sans',
+                                                fontFamily: 'Poppins',
+                                                color: Colors.grey,
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.w500,
                                               ),
-                                          textAlign: TextAlign.start,
+                                          textAlign: TextAlign.left,
                                         ),
                                       ),
                                     ),
@@ -443,69 +392,7 @@ class _SearchpageWidgetState extends State<SearchpageWidget> {
           ),
         ),
       ),
-      bottomNavigationBar: SingleChildScrollView(
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          decoration: const BoxDecoration(
-            color: Color(0xFF40444A),
-            borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(0),
-              bottomRight: Radius.circular(0),
-              topLeft: Radius.circular(32),
-              topRight: Radius.circular(32),
-            ),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              FlutterFlowIconButton(
-                borderColor: Colors.transparent,
-                borderRadius: 25,
-                borderWidth: 1,
-                buttonSize: 60,
-                icon: const Icon(
-                  Icons.home,
-                  color: Color(0xFF565A5E),
-                  size: 25,
-                ),
-                onPressed: () {
-                  print('IconButton pressed ...');
-                },
-              ),
-              FlutterFlowIconButton(
-                borderColor: Colors.transparent,
-                borderRadius: 25,
-                borderWidth: 1,
-                buttonSize: 60,
-                icon: Icon(
-                  Icons.search,
-                  color: FlutterFlowTheme.of(context).secondaryBackground,
-                  size: 25,
-                ),
-                onPressed: () {
-                  print('IconButton pressed ...');
-                },
-              ),
-              FlutterFlowIconButton(
-                borderColor: Colors.transparent,
-                borderRadius: 25,
-                borderWidth: 1,
-                buttonSize: 60,
-                icon: const Icon(
-                  Icons.library_music_outlined,
-                  color: Color(0xFF565A5E),
-                  size: 30,
-                ),
-                onPressed: () {
-                  print('IconButton pressed ...');
-                },
-              ),
-            ],
-          ),
-        ),
-      ),
+      bottomNavigationBar: bottomappbarCustom2(),
     );
   }
 }

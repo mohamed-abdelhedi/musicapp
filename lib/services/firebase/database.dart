@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:musicapp/screen/login/signup.dart';
 
 Timestamp _dateTimeToTimestamp(DateTime dateTime) {
   return Timestamp.fromMillisecondsSinceEpoch(dateTime.millisecondsSinceEpoch);
@@ -20,8 +21,8 @@ class DatabaseService {
     List<dynamic> favoritePlaylist,
   ) async {
     return await users.doc(email).set({
-      'email': email,
-      'name': name,
+      'email': SignupWidget.email,
+      'name': SignupWidget.name,
       'BirthDate': _dateTimeToTimestamp(date),
       'likedSongs': likedSongs,
       'downloadedSongs': downloadedSongs,

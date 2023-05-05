@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:just_audio/just_audio.dart';
 import 'package:musicapp/screen/bottomappbar.dart';
 import 'package:musicapp/provider/song_model_provider.dart';
-import 'package:musicapp/screen/songoverview.dart';
+import 'package:musicapp/screen/songoverview/songoverview.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';

@@ -116,7 +116,7 @@ class _SignupWidgetState extends State<SignupWidget> {
                     child: TextFormField(
                       controller: name,
                       autofocus: true,
-                      autofillHints: [AutofillHints.email],
+                      //autofillHints: [AutofillHints.email],
                       obscureText: false,
                       decoration: InputDecoration(
                         hintText: 'Enter your Name',
@@ -153,8 +153,6 @@ class _SignupWidgetState extends State<SignupWidget> {
                       validator: (name) {
                         if (!name!.isNotEmpty) {
                           return 'please enter valid name';
-                        } else {
-                          SignupWidget.name = name;
                         }
                       },
                       style: FlutterFlowTheme.of(context).bodyText1.override(
@@ -253,7 +251,7 @@ class _SignupWidgetState extends State<SignupWidget> {
                     width: MediaQuery.of(context).size.width * 0.9,
                     child: TextFormField(
                       controller: password,
-                      validator: (email) {
+                      validator: (password) {
                         if (password == null) {
                           return 'please enter valid password';
                         }
@@ -462,7 +460,7 @@ class _SignupWidgetState extends State<SignupWidget> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const SigninWidget()));
+                                  builder: (context) =>  SigninWidget()));
                         } else {
                           showDialog(
                               context: context,

@@ -6,6 +6,7 @@ import 'package:musicapp/provider/SearchScreens/ArtistsSearch.dart';
 import 'package:musicapp/provider/SearchScreens/SongsSearch.dart';
 import 'package:musicapp/provider/SearchScreens/playist.dart';
 import 'package:musicapp/screen/bottomappbar.dart';
+import 'package:musicapp/screen/searchpage.dart';
 import 'package:musicapp/services/YTMusic/ytmusic.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -128,12 +129,19 @@ class _searchListState extends State<searchList>
                                       borderWidth: 1,
                                       buttonSize: 60,
                                       icon: const Icon(
-                                        Icons.search,
+                                        Icons.arrow_back_sharp,
                                         color: Color(0xFF565A5E),
                                         size: 20,
                                       ),
                                       onPressed: () {
-                                        print('IconButton pressed ...');
+                                        if (mounted) {
+                                          Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    SearchpageWidget()),
+                                          );
+                                        }
                                       },
                                     ),
                                     Expanded(
@@ -142,7 +150,7 @@ class _searchListState extends State<searchList>
                                             const AlignmentDirectional(0, 0),
                                         child: TextFormField(
                                           controller: textEditingController,
-                                          // autofocus: true,
+                                          autofocus: true,
                                           obscureText: false,
                                           // ignore: prefer_const_constructors
                                           decoration: InputDecoration(

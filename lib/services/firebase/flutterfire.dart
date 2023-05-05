@@ -40,8 +40,9 @@ Future<String?> register(String email, String password) async {
     User? user = result.user;
 
     await DatabaseService(email: email)
-        .updateUser(SignupWidget.name, email, SignupWidget.date, [], [], []);
-
+        .updateUser(email, SignupWidget.name, SignupWidget.date, [], [], []);
+    await user!.updateDisplayName(email);
+    await user!.updateEmail(email);
     return "success";
   } on FirebaseAuthException catch (e) {
     if (e.code == 'weak-password') {

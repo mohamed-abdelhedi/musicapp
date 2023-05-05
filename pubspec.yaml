@@ -74,6 +74,10 @@ dependencies:
   firebase_auth: ^4.2.2
   flutter_secure_storage: ^8.0.0
   get: ^4.6.5
+  firebase_database: ^10.1.2
+  flutter_file_downloader: ^1.1.2
+  flutter_downloader: ^1.10.2
+  dio: ^5.1.1
 
 dev_dependencies:
   flutter_test:
