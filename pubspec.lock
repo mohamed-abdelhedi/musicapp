@@ -57,6 +57,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.1"
+  audiotagger:
+    dependency: "direct main"
+    description:
+      name: audiotagger
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.2.1"
   auto_size_text:
     dependency: "direct main"
     description:
@@ -300,20 +307,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.3.0"
-  flutter_downloader:
+  flutter_ffmpeg:
     dependency: "direct main"
     description:
-      name: flutter_downloader
+      name: flutter_ffmpeg
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.10.2"
-  flutter_file_downloader:
-    dependency: "direct main"
-    description:
-      name: flutter_file_downloader
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.1.2"
+    version: "0.4.2"
   flutter_image:
     dependency: "direct main"
     description:

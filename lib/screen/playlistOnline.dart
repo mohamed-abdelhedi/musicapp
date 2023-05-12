@@ -49,6 +49,7 @@ class _playlistonlinetWidgetState extends State<playlistonlinetWidget> {
 
   playsong(String? uri) {
     try {
+      _audioPlayer.stop();
       _audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(uri!)));
       _audioPlayer.play();
     } on Exception {

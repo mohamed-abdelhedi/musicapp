@@ -53,6 +53,7 @@ class _SongoverviewWidgetonlinepState extends State<SongoverviewWidgetonlinep> {
 
   var yt = YoutubeExplode();
   Future playprevious() async {
+     _audioPlayer.stop();
     if (index - 1 >= 0) {
       var video = await yt.videos
           .get('https://youtube.com/watch?v=${playlist[index - 1].id}');
@@ -79,6 +80,7 @@ class _SongoverviewWidgetonlinepState extends State<SongoverviewWidgetonlinep> {
   }
 
   Future playnext() async {
+     _audioPlayer.stop();
     if (index + 1 <= playlist.length) {
       var video = await yt.videos
           .get('https://youtube.com/watch?v=${playlist[index + 1].id}');

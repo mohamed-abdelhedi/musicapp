@@ -3,10 +3,14 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import 'package:marquee/marquee.dart';
 import 'package:musicapp/screen/bottomappbar.dart';
 import 'package:musicapp/screen/bottomappbar2.dart';
 import 'package:musicapp/screen/songoverview/songoverview.dart';
 import 'package:on_audio_query/on_audio_query.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uri_to_file/uri_to_file.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -25,13 +29,36 @@ class _localplaylisttWidgetState extends State<localplaylisttWidget> {
   final _unfocusNode = FocusNode();
   final OnAudioQuery _audioQuery = OnAudioQuery();
   final AudioPlayer _audioPlayer = AudioPlayer();
+  Directory? dir;
+  File file = File('');
+  Directory directory = new Directory('');
 
+  String path = '';
   List<SongModel> allSongs = <SongModel>[];
   bool _isPlayerContorlsWidgetVisible = false;
   @override
   void initState() {
     super.initState();
     requestPermission();
+    initAsyncState();
+    getsong();
+  }
+
+  Future<void> getsong() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    var path = preferences.getString('path');
+    log(path.toString());
+    file = File(path!);
+
+    try {
+      if (file.existsSync()) {
+        file.deleteSync();
+        _audioQuery.scanMedia(file.path); // Scan the media 'path'
+      }
+    } catch (e) {
+      debugPrint('$e');
+      log(e.toString());
+    }
   }
 
   playsong(String? uri) {
@@ -63,6 +90,31 @@ class _localplaylisttWidgetState extends State<localplaylisttWidget> {
     return playlist;
   }
 
+  List<String> paths = [];
+  Future<void> initAsyncState() async {
+    // Your async code here
+    var permisson = Permission.storage.request();
+    var status = Permission.storage.status;
+    final dir = await getExternalStorageDirectory();
+    final path = dir?.path;
+
+    final directory = Directory('$path');
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.setString('path', path!);
+    final List<FileSystemEntity> entities = await directory.list().toList();
+    List<String> paths = [];
+    entities.forEach((file) {
+      if (file.path.endsWith('.mp3')) {
+        paths.add(file.path);
+      }
+    });
+    setState(() {
+      this.path = path;
+      this.paths = paths;
+      this.dir = dir;
+    });
+  }
+
   requestPermission() async {
     if (Platform.isAndroid) {
       bool permissionStatus = await _audioQuery.permissionsStatus();
@@ -72,6 +124,11 @@ class _localplaylisttWidgetState extends State<localplaylisttWidget> {
       setState(() {});
     }
   }
+
+  // Future<void> getAllSongs() async {
+  //   songs = await audioQuery.getSongs();
+  //   setState(() {});
+  // }
 
   @override
   void dispose() {
@@ -87,12 +144,7 @@ class _localplaylisttWidgetState extends State<localplaylisttWidget> {
 
   Widget songsListView() {
     return FutureBuilder<List<SongModel>>(
-      future: _audioQuery.querySongs(
-        sortType: SongSortType.DATE_ADDED,
-        orderType: OrderType.DESC_OR_GREATER,
-        uriType: UriType.EXTERNAL,
-        ignoreCase: true,
-      ),
+      future: _audioQuery.querySongs(),
       builder: (context, item) {
         if (item.data == null) {
           return const Center(
@@ -101,36 +153,41 @@ class _localplaylisttWidgetState extends State<localplaylisttWidget> {
         } else if (item.data!.isEmpty) {
           return const Center(
               child: Text(
-            "No songs Found!! , add Some",
+            "No songs Found!! , Download Some",
             style: TextStyle(
               color: Colors.white,
             ),
           ));
         }
         List<SongModel> songs = item.data!;
+        // .where((song) => song.data.endsWith('mp3') == false)
+        // .toList();
+
+        log(songs.toString());
         return ListView.builder(
-            itemCount: item.data!.length,
+            itemCount: songs.length,
             itemBuilder: (context, index) {
-              allSongs.addAll(item.data!);
+              allSongs.addAll(songs);
               return InkWell(
                 onTap: () async {
+                  _audioPlayer.stop();
                   print('--------------');
                   print('songModelList[index]');
-                  print(item.data!);
+                  print(songs);
                   print('--------------');
                   await _audioPlayer.setAudioSource(AudioSource.uri(
-                    Uri.parse(item.data![index].uri!),
+                    Uri.parse(songs[index].uri!),
                     tag: MediaItem(
                       // Specify a unique ID for each media item:
                       id: '1',
                       // Metadata to display in the notification:
-                      album: item.data![index].artist ?? 'unknown',
-                      title: item.data![index].title,
+                      album: songs[index].artist ?? 'unknown',
+                      title: songs[index].title,
                       artUri: Uri.parse('https://picsum.photos/seed/204/600'),
                     ),
                   ));
 
-                  //playsong(item.data![index].uri);
+                  //playsong(songs[index].uri);
                   // ignore: use_build_context_synchronously
                   _audioPlayer.play();
                   // ignore: use_build_context_synchronously
@@ -155,15 +212,38 @@ class _localplaylisttWidgetState extends State<localplaylisttWidget> {
                         color: const Color(0xFF0685CE),
                       ),
                     ),
-                    Text(
-                      item.data!.elementAt(index).displayName,
-                      style: FlutterFlowTheme.of(context).bodyText1.override(
-                            fontFamily: 'Poppins',
-                            color:
-                                FlutterFlowTheme.of(context).primaryBackground,
-                            fontWeight: FontWeight.w600,
+                    SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.7,
+                        height: MediaQuery.of(context).size.width * 0.05,
+                        child: Marquee(
+                          text:
+                              '${item.data!.elementAt(index).displayName}                                                ',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
                           ),
-                    ),
+                          scrollAxis: Axis.horizontal,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          blankSpace: 20.0,
+                          velocity: 50.0,
+                          pauseAfterRound: Duration(seconds: 7),
+                          startPadding: 10.0,
+                          accelerationDuration: Duration(seconds: 3),
+                          accelerationCurve: Curves.linear,
+                          decelerationDuration: Duration(milliseconds: 500),
+                          decelerationCurve: Curves.easeOut,
+                        )
+                        // Text(
+                        //   playlist[index].title,
+                        //   style: FlutterFlowTheme.of(context).bodyText1.override(
+                        //         fontFamily: 'Poppins',
+                        //         color:
+                        //             FlutterFlowTheme.of(context).primaryBackground,
+                        //         fontWeight: FontWeight.w600,
+                        //         fontSize: 8,
+                        //       ),
+                        // ),
+                        ),
                     Expanded(
                       child: Align(
                         alignment: const AlignmentDirectional(0.9, 0),
@@ -171,20 +251,16 @@ class _localplaylisttWidgetState extends State<localplaylisttWidget> {
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            Text(
-                              item.data!
-                                  .elementAt(index)
-                                  .duration
-                                  .toString()
-                                  .padLeft(2, "0"),
-                              style: FlutterFlowTheme.of(context)
-                                  .bodyText1
-                                  .override(
-                                    fontFamily: 'Poppins',
-                                    color: FlutterFlowTheme.of(context)
-                                        .primaryBtnText,
-                                  ),
-                            ),
+                            // Text(
+                            //   ' ${songs.elementAt(index).duration! / 60}:${songs.elementAt(index).duration! - songs.elementAt(index).duration! / 60}',
+                            //   style: FlutterFlowTheme.of(context)
+                            //       .bodyText1
+                            //       .override(
+                            //         fontFamily: 'Poppins',
+                            //         color: FlutterFlowTheme.of(context)
+                            //             .primaryBtnText,
+                            //       ),
+                            // ),
                             FlutterFlowIconButton(
                               borderColor: Colors.transparent,
                               borderRadius: 30,

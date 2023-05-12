@@ -27,7 +27,7 @@ subprojects {
 subprojects {
     project.evaluationDependsOn(':app')
 }
-
+ext.flutterFFmpegPackage = 'full'
 task clean(type: Delete) {
     delete rootProject.buildDir
 }

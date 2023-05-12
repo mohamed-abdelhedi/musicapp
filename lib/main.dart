@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:logging/logging.dart';
@@ -10,6 +9,7 @@ import 'package:musicapp/screen/homepage.dart';
 import 'package:musicapp/screen/login/welcoming.dart';
 import 'package:musicapp/screen/searchList.dart';
 import 'package:musicapp/screen/searchpage.dart';
+import 'package:musicapp/screen/test.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
@@ -18,12 +18,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await FlutterDownloader.initialize(
-      debug:
-          true, // optional: set to false to disable printing logs to console (default: true)
-      ignoreSsl:
-          true // option: set to false to disable working with http links (default: false)
-      );
+
   SharedPreferences preferences = await SharedPreferences.getInstance();
   var email = preferences.getString('email');
   await Firebase.initializeApp();
@@ -71,5 +66,5 @@ Future main() async {
           title: 'musicapp',
           debugShowCheckedModeBanner: false,
           //home: WelcomingWidget())
-          home: email == null ? WelcomingWidget() : searchList())));
+          home: email == null ? WelcomingWidget() : HomePageWidget())));
 }

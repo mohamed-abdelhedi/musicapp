@@ -50,6 +50,7 @@ class _SongoverviewWidgetState extends State<SongoverviewWidget> {
   void playprevious() {
     if (index - 1 >= 0) {
       log((index - 1).toString());
+      _audioPlayer.stop();
       _audioPlayer.setAudioSource(playlist[index - 1]);
       _audioPlayer.play();
     }
@@ -58,6 +59,7 @@ class _SongoverviewWidgetState extends State<SongoverviewWidget> {
   void playnext() {
     if (index + 1 <= playlist.length) {
       log((index + 1).toString());
+      _audioPlayer.stop();
       _audioPlayer.setAudioSource(playlist[index + 1]);
       _audioPlayer.play();
     }
@@ -651,7 +653,7 @@ class MediaMetadata extends StatelessWidget {
                   padding: const EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
                   child: Image(
                     image: AssetImage("assets/images/musicartwork.png"),
-                    width: MediaQuery.of(context).size.width * 0.8,
+                    width: MediaQuery.of(context).size.width * 0.7,
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -666,26 +668,34 @@ class MediaMetadata extends StatelessWidget {
                             Column(
                               mainAxisSize: MainAxisSize.max,
                               children: [
-                                Text(
-                                  title,
-                                  style: FlutterFlowTheme.of(context)
-                                      .bodyText1
-                                      .override(
-                                        fontFamily: 'Poppins',
-                                        color: FlutterFlowTheme.of(context)
-                                            .primaryBtnText,
-                                        fontSize: 25,
-                                        fontWeight: FontWeight.w600,
-                                      ),
+                                SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.8,
+                                  height:
+                                      MediaQuery.of(context).size.width * 0.1,
+                                  child: Text(
+                                    title,
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodyText1
+                                        .override(
+                                          fontFamily: 'Poppins',
+                                          color: FlutterFlowTheme.of(context)
+                                              .primaryBtnText,
+                                          //fontSize: 25,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                  ),
                                 ),
-                                Text(
-                                  artist,
-                                  style: FlutterFlowTheme.of(context)
-                                      .bodyText1
-                                      .override(
-                                        fontFamily: 'Poppins',
-                                        color: const Color(0xFF565A5E),
-                                      ),
+                                SizedBox(
+                                  child: Text(
+                                    artist,
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodyText1
+                                        .override(
+                                          fontFamily: 'Poppins',
+                                          color: const Color(0xFF565A5E),
+                                        ),
+                                  ),
                                 ),
                               ],
                             ),
