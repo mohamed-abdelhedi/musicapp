@@ -242,34 +242,38 @@ class _SongsSearchState extends State<SongsSearch> {
                           ),
                         ),
                         clipBehavior: Clip.antiAlias,
-                        child: CachedNetworkImage(
-                          fit: BoxFit.cover,
-                          errorWidget: (context, url, error) {
-                            // If the URL is the one causing the error, return a default image widget
-                            if (url ==
-                                'https://img.youtube.com/vi/gCYcHz2k5x0/maxresdefault.jpg') {
-                              return Image.asset(
-                                  'assets/images/musicartwork.png');
-                            }
-                            // Otherwise, return a generic error widget
-                            else {
-                              return const Icon(Icons.error);
-                            }
-                          },
-                          imageUrl: 'https://picsum.photos/seed/125/600',
-                          //section['items'][idx]['secondImage'],
-                          // imageUrl: section['items'][idx]['image'],
-                          placeholder: (
-                            context,
-                            url,
-                          ) =>
-                              const Image(
-                            fit: BoxFit.cover,
-                            image: AssetImage(
-                              'assets/images/musicartwork.png',
-                            ),
-                          ),
-                        ),
+                        // child: Image.asset(
+                        //   'assets/images/musicartwork.png',
+                        //   fit: BoxFit.fill,
+                        // )
+                        // CachedNetworkImage(
+                        //   fit: BoxFit.cover,
+                        //   errorWidget: (context, url, error) {
+                        //     // If the URL is the one causing the error, return a default image widget
+                        //     if (url ==
+                        //         'https://img.youtube.com/vi/gCYcHz2k5x0/maxresdefault.jpg') {
+                        //       return Image.asset(
+                        //           'assets/images/musicartwork.png');
+                        //     }
+                        //     // Otherwise, return a generic error widget
+                        //     else {
+                        //       return const Icon(Icons.error);
+                        //     }
+                        //   },
+                        //   imageUrl: 'https://picsum.photos/seed/125/600',
+                        //   //section['items'][idx]['secondImage'],
+                        //   // imageUrl: section['items'][idx]['image'],
+                        //   placeholder: (
+                        //     context,
+                        //     url,
+                        //   ) =>
+                        //       Image(
+                        //     fit: BoxFit.cover,
+                        //     image: AssetImage(
+                        //       'assets/images/musicartwork.png',
+                        //     ),
+                        //   ),
+                        // ),
                       ),
                       onTap: () async {
                         _audioPlayer.stop();

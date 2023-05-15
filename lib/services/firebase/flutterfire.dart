@@ -42,14 +42,14 @@ Future<String?> register(String email, String password) async {
     await DatabaseService(email: email)
         .updateUser(email, SignupWidget.name, SignupWidget.date, [], [], []);
     await user!.updateDisplayName(email);
-    await user!.updateEmail(email);
+    await user.updateEmail(email);
     return "success";
   } on FirebaseAuthException catch (e) {
     if (e.code == 'weak-password') {
-      print('The password provided is too weak.');
+  
       return 'The password provided is too weak.';
     } else if (e.code == 'email-already-in-use') {
-      print('The account already exists for that email.');
+    
       return 'The account already exists for that email.';
     }
     //return false;

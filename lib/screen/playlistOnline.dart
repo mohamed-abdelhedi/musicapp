@@ -1,6 +1,5 @@
 import 'dart:developer';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:just_audio/just_audio.dart';
@@ -9,6 +8,7 @@ import 'package:marquee/marquee.dart';
 import 'package:musicapp/screen/bottomappbar.dart';
 import 'package:musicapp/screen/songoverview/songoverviewonline%20for%20playlist.dart';
 import 'package:on_audio_query/on_audio_query.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -38,11 +38,18 @@ class _playlistonlinetWidgetState extends State<playlistonlinetWidget> {
 
   late final playlist = widget.playlist;
   late final title = widget.title;
+  late String id = widget.id.toString();
   bool playlist_added = false;
   bool _isPlayerContorlsWidgetVisible = false;
   @override
   void initState() {
     super.initState();
+  }
+
+  Future<List<String>?> playlistlist() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    var playlistlist = preferences.getStringList('playlist');
+    return playlistlist;
   }
 
   final String userId = FirebaseAuth.instance.currentUser!.uid;
@@ -58,39 +65,7 @@ class _playlistonlinetWidgetState extends State<playlistonlinetWidget> {
   }
 
   var yt = YoutubeExplode();
-  // Future<List<Video>> Getplaylist() async {
-  //   var videos = await yt.playlists.getVideos(playlistID);
-  //   log(videos.toList().toString());
 
-  //   return videos.toList();
-  // }
-/* this fonction took so much time to load list of videos */
-  // Future<List<Map>> convertvideotoaudio() async {
-  //   List<Video> videos = await Getplaylist();
-  //   List<Map> allsongs = [];
-  //   for (int i = 0; i < videos.length; i++) {
-  //     var video =
-  //         await yt.videos.get('https://youtube.com/watch?v=${videos[i].id}');
-  //     final manifest = await yt.videos.streamsClient.getManifest(videos[i].id);
-  //     String songurl = manifest.muxed.last.url.toString();
-  //     String imgurl =
-  //         'https://img.youtube.com/vi/${videos[i].id}/hqdefault.jpg';
-
-  //     allsongs.addAll([
-  //       {
-  //         'id': videos[i].id,
-  //         'title': video.title,
-  //         'duration': video.duration,
-  //         'url': songurl,
-  //         'imgurl': imgurl,
-  //       }
-  //     ]);
-  //   }
-
-  //   return allsongs;
-  // }
-
-  // List<AudioSource> playlist = [];
   List<AudioSource> returnplaylist(_songModelList) {
     for (int i = 0; i < _songModelList.length; i++) {
       playlist.add(AudioSource.uri(
@@ -166,7 +141,7 @@ class _playlistonlinetWidgetState extends State<playlistonlinetWidget> {
                         image: NetworkImage(
                             'https://img.youtube.com/vi/${playlist[index].id}/hqdefault.jpg'),
                         placeholder:
-                            AssetImage("assets/images/musicartwork.png"),
+                            const AssetImage("assets/images/musicartwork.png"),
                         imageErrorBuilder: (context, error, stackTrace) {
                           return Image.asset("assets/images/musicartwork.png",
                               fit: BoxFit.fitWidth);
@@ -188,7 +163,7 @@ class _playlistonlinetWidgetState extends State<playlistonlinetWidget> {
                       child: Marquee(
                         text:
                             ' ${playlist[index].title}                                            ',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
@@ -196,11 +171,11 @@ class _playlistonlinetWidgetState extends State<playlistonlinetWidget> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         blankSpace: 20.0,
                         velocity: 50.0,
-                        pauseAfterRound: Duration(seconds: 7),
+                        pauseAfterRound: const Duration(seconds: 7),
                         startPadding: 10.0,
-                        accelerationDuration: Duration(seconds: 3),
+                        accelerationDuration: const Duration(seconds: 3),
                         accelerationCurve: Curves.linear,
-                        decelerationDuration: Duration(milliseconds: 500),
+                        decelerationDuration: const Duration(milliseconds: 500),
                         decelerationCurve: Curves.easeOut,
                       )
                       // Text(
@@ -344,13 +319,13 @@ class _playlistonlinetWidgetState extends State<playlistonlinetWidget> {
                                               blankSpace: 20.0,
                                               velocity: 25.0,
                                               pauseAfterRound:
-                                                  Duration(seconds: 5),
+                                                  const Duration(seconds: 5),
                                               startPadding: 10.0,
                                               accelerationDuration:
-                                                  Duration(seconds: 1),
+                                                  const Duration(seconds: 1),
                                               accelerationCurve: Curves.linear,
                                               decelerationDuration:
-                                                  Duration(seconds: 2),
+                                                  const Duration(seconds: 2),
                                               decelerationCurve: Curves.easeOut,
                                             ),
                                           )
@@ -389,21 +364,34 @@ class _playlistonlinetWidgetState extends State<playlistonlinetWidget> {
                                           playlist_added
                                               ? Icons.playlist_add_check
                                               : Icons.playlist_add,
-                                          color: Color(0xFF0685CE),
+                                          color: const Color(0xFF0685CE),
                                           size: 40,
                                         ),
                                         onPressed: () async {
-                                          setState(() {});
-                                          playlist_added = !playlist_added;
-                                          print(playlist_added);
+                                          SharedPreferences preferences =
+                                              await SharedPreferences
+                                                  .getInstance();
+                                          var playlistlist = preferences
+                                              .getStringList('playlist');
+                                          setState(() {
+                                            playlist_added = !playlist_added;
+                                          });
+                                          if (playlistlist == null) {
+                                            playlistlist = [];
+                                          }
+                                          if (playlistlist!.contains(id)) {
+                                            playlistlist.remove(id);
+                                            await preferences.setStringList(
+                                                'playlist', playlistlist);
+                                            log(playlistlist.toString());
+                                          } else {
+                                            playlistlist.add(id);
+                                            await preferences.setStringList(
+                                                'playlist', playlistlist);
+                                            log(playlistlist.toString());
+                                          }
 
-                                          print(userId);
-                                          DatabaseReference ref =
-                                              FirebaseDatabase.instance.ref(
-                                                  "Users/$userId/favoritePlaylist");
-                                          DatabaseEvent event =
-                                              await ref.once();
-                                          print(event.snapshot.value);
+                                          log(playlistlist.toString());
                                         },
                                       ),
                                     ),
