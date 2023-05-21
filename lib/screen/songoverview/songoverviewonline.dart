@@ -12,6 +12,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:marquee/marquee.dart';
 import 'package:musicapp/provider/song_model_provider.dart';
+import 'package:musicapp/services/model/genreclassificationapi.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -26,6 +27,7 @@ import 'package:provider/provider.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:audio_session/audio_session.dart';
+import 'package:http/http.dart' as http;
 
 class SongoverviewWidgetonline extends StatefulWidget {
   const SongoverviewWidgetonline(
@@ -77,9 +79,30 @@ class _SongoverviewWidgetonlineState extends State<SongoverviewWidgetonline> {
     });
   }
 
+  Future<String> classify(String filepath, String name) async {
+    // Replace <URL> with the actual URL where you want to send the request
+    var url = Uri.parse('http://192.168.1.19:8000/upload');
+
+    // Replace <PATH_TO_AUDIO_FILE> with the path to your audio file in the emulator
+    var file = File(filepath);
+
+    // Read the file as bytes
+    var bytes = await file.readAsBytes();
+
+    // Create a multipart request
+    var request = http.MultipartRequest('POST', url);
+
+    request.files.add(
+      http.MultipartFile.fromBytes('audio', bytes, filename: name),
+    );
+    var response = await request.send();
+    var responseString = await response.stream.bytesToString();
+    return responseString;
+  }
+
   var yt = YoutubeExplode();
   Future playprevious() async {
-     _audioPlayer.stop();
+    _audioPlayer.stop();
     if (index - 1 >= 0) {
       log((index - 1).toString());
       var video = await yt.videos
@@ -107,7 +130,7 @@ class _SongoverviewWidgetonlineState extends State<SongoverviewWidgetonline> {
   }
 
   Future playnext() async {
-     _audioPlayer.stop();
+    _audioPlayer.stop();
     if (index + 1 <= playlist.length) {
       log((index + 1).toString());
       var video = await yt.videos
@@ -426,6 +449,7 @@ class _SongoverviewWidgetonlineState extends State<SongoverviewWidgetonline> {
                               ),
                               onPressed: () async {
                                 double progress = 0;
+                                log(playlist[0].toString());
                                 final fileName = '${playlist[0]['title']}.webm'
                                     .replaceAll(r'\', '')
                                     .replaceAll('/', '')
@@ -443,17 +467,14 @@ class _SongoverviewWidgetonlineState extends State<SongoverviewWidgetonline> {
                                 file = File('$path/$fileName');
                                 final file2 = File('$path/$fileName'
                                     .replaceAll('.webm', '.mp3'));
-                                log('----------');
-                                log(file2.toString());
-                                log('----------');
+
                                 // log(file.exists().toString());
                                 final video = await yt.videos
                                     .get(playlist[0]['perma_url']);
+                                log(video.toString());
                                 final manifest = await yt.videos.streamsClient
                                     .getManifest(playlist[0]['perma_url']);
-                                log(manifest.toString());
                                 final streams = manifest.audioOnly.first;
-                                log(streams.toString());
                                 final audio = streams;
                                 final audioStream =
                                     yt.videos.streamsClient.get(audio);
@@ -494,22 +515,9 @@ class _SongoverviewWidgetonlineState extends State<SongoverviewWidgetonline> {
                                   }
                                   await output.flush();
                                   await output.close();
+                                  //classify()
                                   var filePath = '$path/$fileName';
 
-                                  //var arguments =
-                                  //     '-i $filePath -vn  -acodeclibmp3lame -qscale:a 2 ${filePath.replaceAll('.webm', '.mp3')}';
-                                  // var cmd =
-                                  //     '-i $filePath -vn -acodec libmp3lame -ab 128k ${filePath.replaceAll('.webm', '.mp3')}';
-
-                                  // FFmpegKit.executeAsync(cmd, (session) async {
-                                  //   final returnCode =
-                                  //       await session.getReturnCode();
-                                  //   final output =
-                                  //       await session.getAllLogsAsString();
-                                  //   print("returnCode $returnCode");
-                                  //   print("output $output");
-                                  // });
-                                  log(filePath);
                                   final String command =
                                       '-i $filePath -acodec libmp3lame ${filePath.replaceAll('.webm', '.mp3')}';
 
@@ -538,6 +546,26 @@ class _SongoverviewWidgetonlineState extends State<SongoverviewWidgetonline> {
                                     file.delete();
                                   }
                                 }
+                                var filePath =
+                                    '$path/${fileName.replaceAll('.webm', '.mp3')}';
+                                log(filePath);
+                                String genre = await classify(filePath,
+                                    fileName.replaceAll('.webm', '.mp3'));
+                                String genres = genre.replaceAll('"', '');
+
+                                String fieldName = playlist[0]['title'];
+                                Map<String, dynamic> data = {
+                                  'id': playlist[0]['id'],
+                                  'name': playlist[0]['title'],
+                                  'yt_url': playlist[0]['perma_url'],
+                                  'duration': playlist[0]['duration'],
+                                  'img_url': playlist[0]['secondImage']
+                                };
+                                final collection = FirebaseFirestore.instance
+                                    .collection('genre');
+                                final document =
+                                    collection.doc(genres).update(data);
+                                log(document.toString());
                               },
                             ),
                           ],
