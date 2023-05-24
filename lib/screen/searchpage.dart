@@ -178,7 +178,7 @@ class _SearchpageWidgetState extends State<SearchpageWidget> {
                                               borderRadius:
                                                   BorderRadius.circular(32),
                                               child: Image.asset(
-                                                'assets/images/rap.png',
+                                                'assets/images/blues.png',
                                                 width: MediaQuery.of(context)
                                                     .size
                                                     .width,
@@ -201,7 +201,7 @@ class _SearchpageWidgetState extends State<SearchpageWidget> {
                                               borderRadius:
                                                   BorderRadius.circular(32),
                                               child: Image.asset(
-                                                'assets/images/rap.png',
+                                                'assets/images/dance.png',
                                                 width: MediaQuery.of(context)
                                                     .size
                                                     .width,
@@ -224,7 +224,7 @@ class _SearchpageWidgetState extends State<SearchpageWidget> {
                                               borderRadius:
                                                   BorderRadius.circular(32),
                                               child: Image.asset(
-                                                'assets/images/rap.png',
+                                                'assets/images/jazz.png',
                                                 width: MediaQuery.of(context)
                                                     .size
                                                     .width,
@@ -247,7 +247,7 @@ class _SearchpageWidgetState extends State<SearchpageWidget> {
                                               borderRadius:
                                                   BorderRadius.circular(32),
                                               child: Image.asset(
-                                                'assets/images/rap.png',
+                                                'assets/images/rock.png',
                                                 width: MediaQuery.of(context)
                                                     .size
                                                     .width,

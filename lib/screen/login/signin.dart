@@ -1,4 +1,5 @@
 import 'package:musicapp/screen/homepage.dart';
+import 'package:musicapp/screen/login/signup.dart';
 import 'package:musicapp/services/firebase/flutterfire.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -54,12 +55,6 @@ class _SigninWidgetState extends State<SigninWidget> {
               children: [
                 Padding(
                   padding: const EdgeInsetsDirectional.fromSTEB(0, 40, 0, 0),
-                  child: Image.network(
-                    'https://picsum.photos/seed/125/600',
-                    width: MediaQuery.of(context).size.width * 0.6,
-                    height: MediaQuery.of(context).size.height * 0.3,
-                    fit: BoxFit.cover,
-                  ),
                 ),
                 Align(
                   alignment: const AlignmentDirectional(-0.9, 0),
@@ -105,8 +100,8 @@ class _SigninWidgetState extends State<SigninWidget> {
                     width: MediaQuery.of(context).size.width * 0.9,
                     child: TextFormField(
                       controller: textController1,
-                      autofocus: true,
-                      autofillHints: [AutofillHints.email],
+                      autofocus: false,
+                      autofillHints: const [AutofillHints.email],
                       obscureText: false,
                       decoration: InputDecoration(
                         hintText: 'Enter your email',
@@ -166,7 +161,7 @@ class _SigninWidgetState extends State<SigninWidget> {
                     width: MediaQuery.of(context).size.width * 0.9,
                     child: TextFormField(
                       controller: textController2,
-                      autofocus: true,
+                      autofocus: false,
                       obscureText: !passwordVisibility,
                       decoration: InputDecoration(
                         hintText: 'Enter your password',
@@ -236,42 +231,16 @@ class _SigninWidgetState extends State<SigninWidget> {
                 Row(
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
+                  children: const [
                     Align(
-                      alignment: const AlignmentDirectional(-0.85, 0),
+                      alignment: AlignmentDirectional(-0.85, 0),
                       child: Padding(
                         padding:
-                            const EdgeInsetsDirectional.fromSTEB(20, 0, 0, 0),
-                        child: Theme(
-                          data: ThemeData(
-                            checkboxTheme: CheckboxThemeData(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(0),
-                              ),
-                            ),
-                            unselectedWidgetColor: const Color(0xFFF5F5F5),
-                          ),
-                          child: Checkbox(
-                            value: checkboxValue ??= false,
-                            onChanged: (newValue) async {
-                              setState(() => checkboxValue = newValue!);
-                            },
-                            activeColor:
-                                FlutterFlowTheme.of(context).primaryColor,
-                          ),
-                        ),
+                            EdgeInsetsDirectional.fromSTEB(20, 0, 0, 10),
                       ),
                     ),
                     Align(
-                      alignment: const AlignmentDirectional(0, 0),
-                      child: Text(
-                        'Remember me',
-                        style: FlutterFlowTheme.of(context).bodyText1.override(
-                              fontFamily: 'Poppins',
-                              color:
-                                  FlutterFlowTheme.of(context).primaryBtnText,
-                            ),
-                      ),
+                      alignment: AlignmentDirectional(0, 0),
                     ),
                   ],
                 ),
@@ -279,9 +248,7 @@ class _SigninWidgetState extends State<SigninWidget> {
                   padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
                   child: FFButtonWidget(
                     onPressed: () {
-                      print(textController1);
-                      print('((((((textController1))))))');
-                      print(textController2);
+               
                       if (textController1 != null && textController2 != null) {
                         signIn(textController1!.text, textController2!.text)
                             .then((value) async {
@@ -345,12 +312,21 @@ class _SigninWidgetState extends State<SigninWidget> {
                               ),
                         ),
                       ),
-                      Text(
-                        'Sign Up',
-                        style: FlutterFlowTheme.of(context).bodyText1.override(
-                              fontFamily: 'Poppins',
-                              color: const Color(0xFF0685CE),
-                            ),
+                      GestureDetector(
+                        onTap: (() {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const SignupWidget()));
+                        }),
+                        child: Text(
+                          'Sign Up',
+                          style:
+                              FlutterFlowTheme.of(context).bodyText1.override(
+                                    fontFamily: 'Poppins',
+                                    color: const Color(0xFF0685CE),
+                                  ),
+                        ),
                       ),
                     ],
                   ),

@@ -4,8 +4,9 @@ import 'package:musicapp/provider/SearchProvider.dart';
 import 'package:musicapp/provider/SearchScreens/ArtistsSearch.dart';
 
 import 'package:musicapp/provider/SearchScreens/SongsSearch.dart';
-import 'package:musicapp/provider/SearchScreens/playist.dart';
+import 'package:musicapp/provider/SearchScreens/playlist.dart';
 import 'package:musicapp/screen/bottomappbar.dart';
+import 'package:musicapp/screen/bottomappbar2.dart';
 import 'package:musicapp/screen/searchpage.dart';
 import 'package:musicapp/services/YTMusic/ytmusic.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
@@ -237,6 +238,9 @@ class _searchListState extends State<searchList>
                                       ),
                                     ),
                                     Container(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.25,
                                       child: Expanded(
                                         child: ValueListenableBuilder(
                                             valueListenable:
@@ -316,7 +320,7 @@ class _searchListState extends State<searchList>
               ),
             ),
           ),
-          bottomNavigationBar: const bottomappbarCustom()),
+          bottomNavigationBar: const bottomappbarCustom2()),
     );
   }
 

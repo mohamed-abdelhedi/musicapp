@@ -79,7 +79,6 @@ dependencies:
   audiotagger: ^2.2.1
   flutter_ffmpeg: ^0.4.2
   http: ^0.13.5
-  
 
 dev_dependencies:
   flutter_test:
@@ -104,6 +103,7 @@ flutter:
   assets:
     - assets/images/
     - assets/music/
+
 
   # To add assets to your application, add an assets section, like this:
   # assets:

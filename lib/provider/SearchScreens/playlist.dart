@@ -55,73 +55,42 @@ class _playlistsearchState extends State<playlistsearch> {
                             .getVideos(snapshot.data![index].playlistId)
                             .toList();
 
+                        // ignore: use_build_context_synchronously
                         Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => playlistonlinetWidget(
-                                  id:snapshot.data![index].playlistId,
+                                    id: snapshot.data![index].playlistId,
                                     playlist: videos,
                                     title: snapshot.data![index].playlistTitle
                                         .toString())));
                       },
                       child: ListTile(
-                        title: Text(
-                          snapshot.data![index].playlistTitle.toString(),
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500,
-                            fontFamily: 'Poppins',
-                          ),
-                        ),
-                        subtitle: Text(
-                          '${snapshot.data![index].playlistVideoCount.toString()} songs ',
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontFamily: 'Poppins',
-                            color: Color(0xFF40444A),
-                          ),
-                        ),
-                        contentPadding: const EdgeInsets.only(
-                          left: 15.0,
-                        ),
-                        leading: Card(
-                          margin: EdgeInsets.zero,
-                          elevation: 8,
-                          shape: RoundedRectangleBorder(),
-                          clipBehavior: Clip.antiAlias,
-                          child: CachedNetworkImage(
-                            fit: BoxFit.cover,
-                            errorWidget: (context, url, error) {
-                              // If the URL is the one causing the error, return a default image widget
-                              if (url ==
-                                  'https://img.youtube.com/vi/gCYcHz2k5x0/maxresdefault.jpg') {
-                                return Image.asset(
-                                    'assets/images/musicartwork.png');
-                              }
-                              // Otherwise, return a generic error widget
-                              else {
-                                return Icon(Icons.error);
-                              }
-                            },
-                            imageUrl: 'https://picsum.photos/seed/125/600',
-                            //snapshot.data![index].thumbnails[0].url
-                            // .toString(),
-
-                            // imageUrl: section['items'][idx]['image'],
-                            placeholder: (
-                              context,
-                              url,
-                            ) =>
-                                const Image(
-                              fit: BoxFit.cover,
-                              image: AssetImage(
-                                'assets/images/musicartwork.png',
-                              ),
+                          title: Text(
+                            snapshot.data![index].playlistTitle.toString(),
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: 'Poppins',
                             ),
                           ),
-                        ),
-                      ),
+                          subtitle: Text(
+                            '${snapshot.data![index].playlistVideoCount.toString()} songs ',
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              color: Color(0xFF40444A),
+                            ),
+                          ),
+                          contentPadding: const EdgeInsets.only(
+                            left: 15.0,
+                          ),
+                          leading: Icon(
+                            Icons.library_music,
+                            color: Color(0xFF0685CE),
+                            size: 30,
+                          )),
                     ),
                   );
                 },

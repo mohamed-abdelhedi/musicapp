@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:musicapp/screen/bottomappbar.dart';
 import 'package:musicapp/screen/bottomappbar2.dart';
+import 'package:musicapp/screen/localplaylist.dart';
 import 'package:musicapp/screen/login/welcoming.dart';
 import 'package:musicapp/screen/playlist.dart';
 import 'package:musicapp/screen/playlistOnline.dart';
@@ -51,9 +52,11 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     var playlistlist = preferences.getStringList('playlist');
 
-    for (int i = 0; i < playlistlist!.length; i++) {
-      var playlist = await yt.playlists.get(playlistlist[i]);
-      playlistdet.add(playlist);
+    if (playlistlist != null) {
+      for (int i = 0; i < playlistlist!.length; i++) {
+        var playlist = await yt.playlists.get(playlistlist[i]);
+        playlistdet.add(playlist);
+      }
     }
     setState(() {
       playlists = playlistdet;
@@ -75,8 +78,9 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.remove('email');
     FirebaseAuth.instance.signOut();
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => WelcomingWidget()));
+    // ignore: use_build_context_synchronously
+    Navigator.pushReplacement(context,
+        MaterialPageRoute(builder: (context) => const WelcomingWidget()));
   }
 
   @override
@@ -86,12 +90,13 @@ class _HomePageWidgetState extends State<HomePageWidget> {
       itemCount: playlists.length,
       itemBuilder: (context, index) {
         return Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(20, 20, 0, 0),
+          padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 0, 0),
           child: InkWell(
             onTap: () async {
               var videos =
                   await yt.playlists.getVideos(playlists[index].id).toList();
 
+              // ignore: use_build_context_synchronously
               Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -114,9 +119,9 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                   ),
                 ),
                 Align(
-                  alignment: AlignmentDirectional(0, 0),
+                  alignment: const AlignmentDirectional(0, 0),
                   child: Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
                     child: SizedBox(
                       width: MediaQuery.of(context).size.height * 0.2,
                       // height: MediaQuery.of(context).size.height * 0.2,
@@ -148,7 +153,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: Color(0xFF25282C),
+      backgroundColor: const Color(0xFF25282C),
       body: SingleChildScrollView(
         child: SafeArea(
           child: GestureDetector(
@@ -158,24 +163,24 @@ class _HomePageWidgetState extends State<HomePageWidget> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Align(
-                  alignment: AlignmentDirectional(0, 0),
+                  alignment: const AlignmentDirectional(0, 0),
                   child: Container(
                     width: MediaQuery.of(context).size.width,
                     height: MediaQuery.of(context).size.height * 0.82,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: Color(0xFF25282C),
                     ),
-                    alignment: AlignmentDirectional(0, 0),
+                    alignment: const AlignmentDirectional(0, 0),
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
                       children: [
                         Align(
-                          alignment: AlignmentDirectional(0, -0.75),
+                          alignment: const AlignmentDirectional(0, -0.75),
                           child: Container(
                             width: MediaQuery.of(context).size.width,
                             height: MediaQuery.of(context).size.height * 0.18,
                             decoration: BoxDecoration(
-                              color: Color(0xFF2E3237),
+                              color: const Color(0xFF2E3237),
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Column(
@@ -186,10 +191,11 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
                                     Align(
-                                      alignment: AlignmentDirectional(-1, 0),
+                                      alignment:
+                                          const AlignmentDirectional(-1, 0),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            20, 20, 0, 0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(20, 20, 0, 0),
                                         child: Text(
                                           'My Library',
                                           style: FlutterFlowTheme.of(context)
@@ -208,18 +214,17 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                     Expanded(
                                       child: Align(
                                         alignment:
-                                            AlignmentDirectional(0.85, 0),
+                                            const AlignmentDirectional(0.85, 0),
                                         child: Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  0, 1, 0, 0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(0, 1, 0, 0),
                                           child: FlutterFlowIconButton(
                                             borderColor: Colors.transparent,
                                             borderRadius: 30,
                                             borderWidth: 1,
                                             buttonSize: 50,
                                             icon: Icon(
-                                              Icons.settings,
+                                              Icons.logout,
                                               color:
                                                   FlutterFlowTheme.of(context)
                                                       .primaryBtnText,
@@ -235,7 +240,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                   ],
                                 ),
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0, 10, 0, 0),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.max,
@@ -270,8 +275,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                       ),
                                       Expanded(
                                         child: Align(
-                                          alignment:
-                                              AlignmentDirectional(0.8, -0.05),
+                                          alignment: const AlignmentDirectional(
+                                              0.8, -0.05),
                                           child: FlutterFlowIconButton(
                                             borderColor: Colors.transparent,
                                             borderRadius: 30,
@@ -289,7 +294,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                 context,
                                                 MaterialPageRoute(
                                                     builder: (context) =>
-                                                        PlaylistWidget()),
+                                                        const localplaylisttWidget()),
                                               );
                                               ;
                                             },
@@ -311,10 +316,12 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
                                   Align(
-                                    alignment: AlignmentDirectional(-1, 0),
+                                    alignment:
+                                        const AlignmentDirectional(-1, 0),
                                     child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          20, 20, 0, 0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              20, 20, 0, 0),
                                       child: Text(
                                         'Playlist',
                                         style: FlutterFlowTheme.of(context)
@@ -343,12 +350,14 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
                                   Align(
-                                    alignment: AlignmentDirectional(-1, 0),
+                                    alignment:
+                                        const AlignmentDirectional(-1, 0),
                                     child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          20, 20, 0, 0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              20, 20, 0, 0),
                                       child: Text(
-                                        'Album',
+                                        'Genre',
                                         style: FlutterFlowTheme.of(context)
                                             .bodyText1
                                             .override(
@@ -372,9 +381,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  20, 20, 0, 0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(20, 20, 0, 0),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.max,
                                             crossAxisAlignment:
@@ -394,10 +402,13 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                               ),
                                               Align(
                                                 alignment:
-                                                    AlignmentDirectional(0, 0),
+                                                    const AlignmentDirectional(
+                                                        0, 0),
                                                 child: Padding(
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(0, 10, 0, 0),
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                              .fromSTEB(
+                                                          0, 10, 0, 0),
                                                   child: Text(
                                                     'Dance',
                                                     textAlign: TextAlign.start,
@@ -436,7 +447,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
           ),
         ),
       ),
-      bottomNavigationBar: bottomappbarCustom2(),
+      bottomNavigationBar: const bottomappbarCustom2(),
     );
   }
 }

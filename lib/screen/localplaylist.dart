@@ -1,17 +1,18 @@
-import 'dart:developer';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:marquee/marquee.dart';
-import 'package:musicapp/screen/bottomappbar.dart';
+
 import 'package:musicapp/screen/bottomappbar2.dart';
+import 'package:musicapp/screen/homepage.dart';
 import 'package:musicapp/screen/songoverview/songoverview.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:uri_to_file/uri_to_file.dart';
+
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import 'package:flutter/material.dart';
@@ -47,7 +48,7 @@ class _localplaylisttWidgetState extends State<localplaylisttWidget> {
   Future<void> getsong() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     var path = preferences.getString('path');
-    log(path.toString());
+
     file = File(path!);
 
     try {
@@ -57,7 +58,6 @@ class _localplaylisttWidgetState extends State<localplaylisttWidget> {
       }
     } catch (e) {
       debugPrint('$e');
-      log(e.toString());
     }
   }
 
@@ -65,9 +65,7 @@ class _localplaylisttWidgetState extends State<localplaylisttWidget> {
     try {
       _audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(uri!)));
       _audioPlayer.play();
-    } on Exception {
-      log("error parsing song");
-    }
+    } on Exception {}
   }
 
   List<AudioSource> playlist = [];
@@ -160,10 +158,7 @@ class _localplaylisttWidgetState extends State<localplaylisttWidget> {
           ));
         }
         List<SongModel> songs = item.data!;
-        // .where((song) => song.data.endsWith('mp3') == false)
-        // .toList();
 
-        log(songs.toString());
         return ListView.builder(
             itemCount: songs.length,
             itemBuilder: (context, index) {
@@ -171,16 +166,10 @@ class _localplaylisttWidgetState extends State<localplaylisttWidget> {
               return InkWell(
                 onTap: () async {
                   _audioPlayer.stop();
-                  print('--------------');
-                  print('songModelList[index]');
-                  print(songs);
-                  print('--------------');
                   await _audioPlayer.setAudioSource(AudioSource.uri(
                     Uri.parse(songs[index].uri!),
                     tag: MediaItem(
-                      // Specify a unique ID for each media item:
                       id: '1',
-                      // Metadata to display in the notification:
                       album: songs[index].artist ?? 'unknown',
                       title: songs[index].title,
                       artUri: Uri.parse('https://picsum.photos/seed/204/600'),
@@ -218,7 +207,7 @@ class _localplaylisttWidgetState extends State<localplaylisttWidget> {
                         child: Marquee(
                           text:
                               '${item.data!.elementAt(index).displayName}                                                ',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
@@ -226,24 +215,14 @@ class _localplaylisttWidgetState extends State<localplaylisttWidget> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           blankSpace: 20.0,
                           velocity: 50.0,
-                          pauseAfterRound: Duration(seconds: 7),
+                          pauseAfterRound: const Duration(seconds: 7),
                           startPadding: 10.0,
-                          accelerationDuration: Duration(seconds: 3),
+                          accelerationDuration: const Duration(seconds: 3),
                           accelerationCurve: Curves.linear,
-                          decelerationDuration: Duration(milliseconds: 500),
+                          decelerationDuration:
+                              const Duration(milliseconds: 500),
                           decelerationCurve: Curves.easeOut,
-                        )
-                        // Text(
-                        //   playlist[index].title,
-                        //   style: FlutterFlowTheme.of(context).bodyText1.override(
-                        //         fontFamily: 'Poppins',
-                        //         color:
-                        //             FlutterFlowTheme.of(context).primaryBackground,
-                        //         fontWeight: FontWeight.w600,
-                        //         fontSize: 8,
-                        //       ),
-                        // ),
-                        ),
+                        )),
                     Expanded(
                       child: Align(
                         alignment: const AlignmentDirectional(0.9, 0),
@@ -251,16 +230,6 @@ class _localplaylisttWidgetState extends State<localplaylisttWidget> {
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            // Text(
-                            //   ' ${songs.elementAt(index).duration! / 60}:${songs.elementAt(index).duration! - songs.elementAt(index).duration! / 60}',
-                            //   style: FlutterFlowTheme.of(context)
-                            //       .bodyText1
-                            //       .override(
-                            //         fontFamily: 'Poppins',
-                            //         color: FlutterFlowTheme.of(context)
-                            //             .primaryBtnText,
-                            //       ),
-                            // ),
                             FlutterFlowIconButton(
                               borderColor: Colors.transparent,
                               borderRadius: 30,
@@ -342,7 +311,12 @@ class _localplaylisttWidgetState extends State<localplaylisttWidget> {
                                       size: 30,
                                     ),
                                     onPressed: () {
-                                      print('IconButton pressed ...');
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const HomePageWidget()),
+                                      );
                                     },
                                   ),
                                   Column(
@@ -354,7 +328,7 @@ class _localplaylisttWidgetState extends State<localplaylisttWidget> {
                                         padding: const EdgeInsetsDirectional
                                             .fromSTEB(0, 40, 0, 0),
                                         child: Text(
-                                          'Favorite Tracks',
+                                          'Local Tracks',
                                           style: FlutterFlowTheme.of(context)
                                               .bodyText1
                                               .override(
@@ -368,7 +342,7 @@ class _localplaylisttWidgetState extends State<localplaylisttWidget> {
                                         ),
                                       ),
                                       Text(
-                                        '11 songs',
+                                        'downloaded songs',
                                         style: FlutterFlowTheme.of(context)
                                             .bodyText1
                                             .override(
@@ -378,25 +352,6 @@ class _localplaylisttWidgetState extends State<localplaylisttWidget> {
                                             ),
                                       ),
                                     ],
-                                  ),
-                                  Expanded(
-                                    child: Align(
-                                      alignment:
-                                          const AlignmentDirectional(0.65, 0),
-                                      child: FlutterFlowIconButton(
-                                        borderColor: Colors.transparent,
-                                        borderRadius: 0,
-                                        buttonSize: 70,
-                                        icon: const Icon(
-                                          Icons.play_circle_fill,
-                                          color: Color(0xFF0685CE),
-                                          size: 60,
-                                        ),
-                                        onPressed: () {
-                                          print('IconButton pressed ...');
-                                        },
-                                      ),
-                                    ),
                                   ),
                                 ],
                               ),

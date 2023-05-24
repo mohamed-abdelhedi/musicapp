@@ -37,7 +37,7 @@ class _WelcomingWidgetState extends State<WelcomingWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: Color(0xFF25282C),
+      backgroundColor: const Color(0xFF25282C),
       body: SafeArea(
         child: GestureDetector(
           onTap: () => FocusScope.of(context).requestFocus(_unfocusNode),
@@ -51,24 +51,27 @@ class _WelcomingWidgetState extends State<WelcomingWidget> {
                   child: Stack(
                     children: [
                       Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 50),
+                        padding:
+                            const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 50),
                         child: PageView(
                           controller: pageViewController ??=
                               PageController(initialPage: 0),
                           scrollDirection: Axis.horizontal,
                           children: [
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   12, 12, 12, 12),
                               child: Column(
                                 mainAxisSize: MainAxisSize.max,
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Align(
-                                    alignment: AlignmentDirectional(-0.9, 0.1),
+                                    alignment:
+                                        const AlignmentDirectional(-0.9, 0.1),
                                     child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0, 20, 0, 0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0, 20, 0, 0),
                                       child: Text(
                                         'Welcome',
                                         style: FlutterFlowTheme.of(context)
@@ -90,13 +93,14 @@ class _WelcomingWidgetState extends State<WelcomingWidget> {
                                     fit: BoxFit.cover,
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        16, 8, 16, 0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            16, 8, 16, 0),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.max,
                                       children: [
                                         Text(
-                                          'Header One',
+                                          "Unlock Music's Journey",
                                           style: FlutterFlowTheme.of(context)
                                               .title2
                                               .override(
@@ -110,14 +114,15 @@ class _WelcomingWidgetState extends State<WelcomingWidget> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        16, 8, 16, 0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            16, 8, 16, 0),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.max,
                                       children: [
                                         Expanded(
                                           child: Text(
-                                            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ',
+                                            'Welcome to the world of rhythm and melodies, where music takes center stage. Join us and let the notes guide your journey ',
                                             style: FlutterFlowTheme.of(context)
                                                 .bodyText2
                                                 .override(
@@ -135,7 +140,7 @@ class _WelcomingWidgetState extends State<WelcomingWidget> {
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   12, 12, 12, 12),
                               child: Column(
                                 mainAxisSize: MainAxisSize.max,
@@ -148,30 +153,44 @@ class _WelcomingWidgetState extends State<WelcomingWidget> {
                                     fit: BoxFit.cover,
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        16, 8, 16, 0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            16, 8, 16, 0),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.max,
                                       children: [
                                         Text(
-                                          'Header Two',
+                                          "Unlock Music's Journey",
                                           style: FlutterFlowTheme.of(context)
-                                              .title2,
+                                              .title2
+                                              .override(
+                                                fontFamily: 'Poppins',
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .primaryBtnText,
+                                              ),
                                         ),
                                       ],
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        16, 8, 16, 0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            16, 8, 16, 0),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.max,
                                       children: [
                                         Expanded(
                                           child: Text(
-                                            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ',
+                                            'Elevate Your Music Experience: Dive into a Melodic Oasis with Our Seamless App. ',
                                             style: FlutterFlowTheme.of(context)
-                                                .bodyText2,
+                                                .bodyText2
+                                                .override(
+                                                  fontFamily: 'Poppins',
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .primaryBtnText,
+                                                ),
                                           ),
                                         ),
                                       ],
@@ -181,7 +200,7 @@ class _WelcomingWidgetState extends State<WelcomingWidget> {
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   12, 12, 12, 12),
                               child: Column(
                                 mainAxisSize: MainAxisSize.max,
@@ -194,30 +213,44 @@ class _WelcomingWidgetState extends State<WelcomingWidget> {
                                     fit: BoxFit.cover,
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        16, 8, 16, 0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            16, 8, 16, 0),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.max,
                                       children: [
                                         Text(
-                                          'Header Three',
+                                          "Unlock Music's Journey",
                                           style: FlutterFlowTheme.of(context)
-                                              .title2,
+                                              .title2
+                                              .override(
+                                                fontFamily: 'Poppins',
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .primaryBtnText,
+                                              ),
                                         ),
                                       ],
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        16, 8, 16, 0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            16, 8, 16, 0),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.max,
                                       children: [
                                         Expanded(
                                           child: Text(
-                                            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ',
+                                            'Your Personal Soundtrack Awaits: Unleash Your Passion for Music with Our User-Friendly App. ',
                                             style: FlutterFlowTheme.of(context)
-                                                .bodyText2,
+                                                .bodyText2
+                                                .override(
+                                                  fontFamily: 'Poppins',
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .primaryBtnText,
+                                                ),
                                           ),
                                         ),
                                       ],
@@ -230,9 +263,10 @@ class _WelcomingWidgetState extends State<WelcomingWidget> {
                         ),
                       ),
                       Align(
-                        alignment: AlignmentDirectional(0, 1),
+                        alignment: const AlignmentDirectional(0, 1),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
+                          padding:
+                              const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
                           child: smooth_page_indicator.SmoothPageIndicator(
                             controller: pageViewController ??=
                                 PageController(initialPage: 0),
@@ -241,7 +275,7 @@ class _WelcomingWidgetState extends State<WelcomingWidget> {
                             onDotClicked: (i) {
                               pageViewController!.animateToPage(
                                 i,
-                                duration: Duration(milliseconds: 500),
+                                duration: const Duration(milliseconds: 500),
                                 curve: Curves.ease,
                               );
                             },
@@ -252,8 +286,7 @@ class _WelcomingWidgetState extends State<WelcomingWidget> {
                               dotWidth: 16,
                               dotHeight: 4,
                               dotColor: FlutterFlowTheme.of(context).lineColor,
-                              activeDotColor:
-                                  FlutterFlowTheme.of(context).primaryText,
+                              activeDotColor: Color(0xFF0685CE),
                               paintStyle: PaintingStyle.fill,
                             ),
                           ),
@@ -264,27 +297,29 @@ class _WelcomingWidgetState extends State<WelcomingWidget> {
                 ),
               ),
               Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(0, 12, 0, 16),
+                padding: const EdgeInsetsDirectional.fromSTEB(0, 12, 0, 16),
                 child: FFButtonWidget(
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => SigninWidget()),
+                      MaterialPageRoute(
+                          builder: (context) => const SigninWidget()),
                     );
                   },
                   text: 'Login',
                   options: FFButtonOptions(
                     width: 300,
                     height: 50,
-                    padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-                    iconPadding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                    iconPadding:
+                        const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
                     color: FlutterFlowTheme.of(context).secondaryBackground,
                     textStyle: FlutterFlowTheme.of(context).subtitle2.override(
                           fontFamily: 'Poppins',
-                          color: FlutterFlowTheme.of(context).primaryText,
+                          color: Color(0xFF0685CE),
                         ),
                     elevation: 2,
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                       color: Colors.transparent,
                       width: 1,
                     ),
@@ -292,28 +327,30 @@ class _WelcomingWidgetState extends State<WelcomingWidget> {
                 ),
               ),
               Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 24),
+                padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 24),
                 child: FFButtonWidget(
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => SignupWidget()),
+                      MaterialPageRoute(
+                          builder: (context) => const SignupWidget()),
                     );
                   },
                   text: 'Register',
                   options: FFButtonOptions(
                     width: 300,
                     height: 50,
-                    padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-                    iconPadding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-                    color: Color(0xFF0685CE),
+                    padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                    iconPadding:
+                        const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                    color: const Color(0xFF0685CE),
                     textStyle: FlutterFlowTheme.of(context).subtitle2.override(
                           fontFamily: 'Poppins',
                           color:
                               FlutterFlowTheme.of(context).secondaryBackground,
                         ),
                     elevation: 2,
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                       color: Colors.transparent,
                       width: 1,
                     ),

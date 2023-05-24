@@ -127,79 +127,10 @@ class _SongsSearchState extends State<SongsSearch> {
 
                     double progress = 0;
                     return ListTile(
-                      trailing: PopupMenuButton(
-                        color: const Color(0xFF244975),
-                        icon: const Icon(Icons.more_vert, color: Colors.white),
-                        itemBuilder: (context) {
-                          return [
-                            PopupMenuItem(
-                                value: 'Download',
-                                child: const Text(
-                                  'Download',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                onTap: () async {
-                                  final video = await yt.videos
-                                      .get(section['items'][idx]['perma_url']);
-                                  final manifest = await yt.videos.streamsClient
-                                      .getManifest(
-                                          section['items'][idx]['perma_url']);
-                                  final streams =
-                                      manifest.audioOnly.withHighestBitrate();
-                                  final audio = streams;
-                                  final audioStream =
-                                      yt.videos.streamsClient.get(audio);
-
-                                  await dir?.create(recursive: true);
-                                  path1 = '$path/$fileName';
-                                  //final file = File('$path/$fileName');
-                                  if ((file.exists()) == true) {
-                                    print('already downloaded');
-                                  } else {
-                                    final output = file.openWrite(
-                                        mode: FileMode.writeOnlyAppend);
-                                    var len = audio.size.totalBytes;
-                                    var count = 0;
-                                    var msg =
-                                        'Downloading ${video.title}.${audio.container.name}';
-                                    stdout.writeln(msg);
-                                    await for (final data in audioStream) {
-                                      count += data.length;
-                                      setState(() {
-                                        progress = ((count / len) * 100)
-                                            .ceil()
-                                            .toDouble();
-                                      });
-                                      print(progress);
-                                      output.add(data);
-                                    }
-                                    await output.flush();
-                                    await output.close();
-                                    log(progress.toString());
-                                    var filePath = '$path/$fileName';
-
-                                    //var arguments =
-                                    //     '-i $filePath -vn  -
-
-                                    //delete webm format
-                                    // if (filePath.endsWith('.webm') ||
-                                    //     filePath.endsWith('.mp4')) {
-                                    //   file.delete();
-                                    // }
-                                  }
-                                }),
-                            const PopupMenuItem(
-                              value: 'favorite',
-                              child: Text(
-                                'favorite',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            )
-                          ];
-                        },
-                        onSelected: (String value) {
-                          print('You Click on po up menu item');
-                        },
+                      leading: Icon(
+                        Icons.music_note,
+                        color: const Color(0xFF0685CE),
+                        size: 30,
                       ),
                       title: Text(
                         section['items'][idx]['title'].toString(),
@@ -210,73 +141,19 @@ class _SongsSearchState extends State<SongsSearch> {
                           fontFamily: 'Poppins',
                         ),
                       ),
-                      subtitle: Row(
-                        children: [
-                          file.exists() == true
-                              ? const Icon(Icons.download_done,
-                                  size: 20, color: Colors.blue)
-                              : const Icon(Icons.download_for_offline,
-                                  size: 20, color: Colors.blue),
-                          Text(
-                            section['items'][idx]['subtitle'].toString(),
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontFamily: 'Poppins',
-                              color: Color(0xFF40444A),
-                            ),
-                          ),
-                          CircularProgressIndicator(
-                            value: progress / 100,
-                          )
-                        ],
+                      subtitle: Text(
+                        section['items'][idx]['subtitle'].toString(),
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontFamily: 'Poppins',
+                          color: Color(0xFF40444A),
+                        ),
                       ),
                       contentPadding: const EdgeInsets.only(
                         left: 15.0,
                       ),
-                      leading: Card(
-                        margin: EdgeInsets.zero,
-                        elevation: 8,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                            itemType == 'Artist' ? 50.0 : 7.0,
-                          ),
-                        ),
-                        clipBehavior: Clip.antiAlias,
-                        // child: Image.asset(
-                        //   'assets/images/musicartwork.png',
-                        //   fit: BoxFit.fill,
-                        // )
-                        // CachedNetworkImage(
-                        //   fit: BoxFit.cover,
-                        //   errorWidget: (context, url, error) {
-                        //     // If the URL is the one causing the error, return a default image widget
-                        //     if (url ==
-                        //         'https://img.youtube.com/vi/gCYcHz2k5x0/maxresdefault.jpg') {
-                        //       return Image.asset(
-                        //           'assets/images/musicartwork.png');
-                        //     }
-                        //     // Otherwise, return a generic error widget
-                        //     else {
-                        //       return const Icon(Icons.error);
-                        //     }
-                        //   },
-                        //   imageUrl: 'https://picsum.photos/seed/125/600',
-                        //   //section['items'][idx]['secondImage'],
-                        //   // imageUrl: section['items'][idx]['image'],
-                        //   placeholder: (
-                        //     context,
-                        //     url,
-                        //   ) =>
-                        //       Image(
-                        //     fit: BoxFit.cover,
-                        //     image: AssetImage(
-                        //       'assets/images/musicartwork.png',
-                        //     ),
-                        //   ),
-                        // ),
-                      ),
                       onTap: () async {
-                        _audioPlayer.stop();
+                        //  _audioPlayer.stop();
                         String songid = section['items'][idx]['id'];
                         final manifest =
                             await yt.videos.streamsClient.getManifest(songid);

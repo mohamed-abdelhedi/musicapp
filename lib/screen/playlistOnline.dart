@@ -6,6 +6,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:marquee/marquee.dart';
 import 'package:musicapp/screen/bottomappbar.dart';
+import 'package:musicapp/screen/bottomappbar2.dart';
 import 'package:musicapp/screen/songoverview/songoverviewonline%20for%20playlist.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -425,7 +426,7 @@ class _playlistonlinetWidgetState extends State<playlistonlinetWidget> {
             ),
           ),
         ),
-        bottomNavigationBar: const bottomappbarCustom());
+        bottomNavigationBar: const bottomappbarCustom2());
   }
 }
 
