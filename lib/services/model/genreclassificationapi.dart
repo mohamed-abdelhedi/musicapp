@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:http/http.dart' as http;
 
-void classify(String audioFilePath) async {
+void classify(String audioFilePath, String replaceAll) async {
   String apiUrl = 'http://127.0.0.1:5000/upload';
 
   // Create a new multipart request

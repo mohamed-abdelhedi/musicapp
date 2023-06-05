@@ -105,7 +105,7 @@ class _playlistonlinetWidgetState extends State<playlistonlinetWidget> {
               final manifest =
                   await yt.videos.streamsClient.getManifest(playlist[index].id);
               String songurl = manifest.muxed.last.url.toString();
-              log(songurl.toString());
+            //  log(songurl.toString());
               String imgurl =
                   'https://img.youtube.com/vi/${playlist[index].id}/hqdefault.jpg';
               await _audioPlayer.setAudioSource(AudioSource.uri(
@@ -384,15 +384,15 @@ class _playlistonlinetWidgetState extends State<playlistonlinetWidget> {
                                             playlistlist.remove(id);
                                             await preferences.setStringList(
                                                 'playlist', playlistlist);
-                                            log(playlistlist.toString());
+                                          //  log(playlistlist.toString());
                                           } else {
                                             playlistlist.add(id);
                                             await preferences.setStringList(
                                                 'playlist', playlistlist);
-                                            log(playlistlist.toString());
+                                           // log(playlistlist.toString());
                                           }
 
-                                          log(playlistlist.toString());
+                                         // log(playlistlist.toString());
                                         },
                                       ),
                                     ),

@@ -1,19 +1,26 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:marquee/marquee.dart';
 import 'package:musicapp/provider/song_model_provider.dart';
+import 'package:musicapp/services/download.dart';
 import 'package:on_audio_query/on_audio_query.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:http/http.dart' as http;
 
 import 'package:provider/provider.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
@@ -44,16 +51,54 @@ class _SongoverviewWidgetonlinepState extends State<SongoverviewWidgetonlinep> {
   double? sliderValue;
   bool _isPlaying = false;
   List<AudioSource> songList = [];
-
+  final FlutterFFmpeg _flutterFFmpeg = FlutterFFmpeg();
+  Directory? dir;
+  File file = File('');
   int currentIndex = 0;
-
+  String? path;
   void popBack() {
     Navigator.pop(context);
   }
 
+  Future<void> initAsyncState() async {
+    var permisson = Permission.storage.request();
+    var status = Permission.storage.status;
+    final dir = await getExternalStorageDirectory();
+    final path = dir?.path;
+    final path2 =
+        path?.replaceAll('Android/data/com.example.musicapp/files', 'Download');
+    log(path2.toString());
+    final directory = Directory('$path');
+    setState(() {
+      this.path = path2;
+      this.dir = dir;
+    });
+  }
+
+  Future<String> classify(String filepath, String name) async {
+    // Replace <URL> with the actual URL where you want to send the request
+    var url = Uri.parse('http://192.168.1.114:5000/upload');
+
+    // Replace <PATH_TO_AUDIO_FILE> with the path to your audio file in the emulator
+    var file = File(filepath);
+
+    // Read the file as bytes
+    var bytes = await file.readAsBytes();
+
+    // Create a multipart request
+    var request = http.MultipartRequest('POST', url);
+
+    request.files.add(
+      http.MultipartFile.fromBytes('audio', bytes, filename: name),
+    );
+    var response = await request.send();
+    var responseString = await response.stream.bytesToString();
+    return responseString;
+  }
+
   var yt = YoutubeExplode();
   Future playprevious() async {
-     _audioPlayer.stop();
+    _audioPlayer.stop();
     if (index - 1 >= 0) {
       var video = await yt.videos
           .get('https://youtube.com/watch?v=${playlist[index - 1].id}');
@@ -80,7 +125,7 @@ class _SongoverviewWidgetonlinepState extends State<SongoverviewWidgetonlinep> {
   }
 
   Future playnext() async {
-     _audioPlayer.stop();
+    _audioPlayer.stop();
     if (index + 1 <= playlist.length) {
       var video = await yt.videos
           .get('https://youtube.com/watch?v=${playlist[index + 1].id}');
@@ -111,156 +156,24 @@ class _SongoverviewWidgetonlinepState extends State<SongoverviewWidgetonlinep> {
     widget.player.seek(duration);
   }
 
-  // void parseSong() {
-  //   try {
-  //     for (var element in widget.songModelList) {
-  //       songList.add(
-  //         AudioSource.uri(
-  //           Uri.parse(element.uri!),
-  //           tag: MediaItem(
-  //             id: element.id.toString(),
-  //             album: element.album ?? "No Album",
-  //             title: element.displayNameWOExt,
-  //             artUri: Uri.parse(element.id.toString()),
-  //           ),
-  //         ),
-  //       );
-  //     }
-
-  //     widget.player.setAudioSource(
-  //       ConcatenatingAudioSource(children: songList),
-  //     );
-  //     widget.player.play();
-  //     _isPlaying = true;
-
-  //     widget.player.durationStream.listen((duration) {
-  //       if (duration != null) {
-  //         setState(() {
-  //           _duration = duration;
-  //         });
-  //       }
-  //     });
-  //     widget.player.positionStream.listen((position) {
-  //       setState(() {
-  //         _position = position;
-  //       });
-  //     });
-  //     listenToEvent();
-  //     listenToSongIndex();
-  //   } on Exception catch (_) {
-  //     popBack();
-  //   }
-  // }
-
-  // void listenToEvent() {
-  //   widget.player.playerStateStream.listen((state) {
-  //     if (state.playing) {
-  //       setState(() {
-  //         _isPlaying = true;
-  //       });
-  //     } else {
-  //       setState(() {
-  //         _isPlaying = false;
-  //       });
-  //     }
-  //     if (state.processingState == ProcessingState.completed) {
-  //       setState(() {
-  //         _isPlaying = false;
-  //       });
-  //     }
-  //   });
-  // }
-
-  // void listenToSongIndex() {
-  //   widget.player.currentIndexStream.listen(
-  //     (event) {
-  //       setState(
-  //         () {
-  //           if (event != null) {
-  //             currentIndex = event;
-  //           }
-  //           context
-  //               .read<SongModelProvider>()
-  //               .setId(widget.songModelList[currentIndex].id);
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
-
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _unfocusNode = FocusNode();
-  // final _playlist = ConcatenatingAudioSource(children: [
-  //   AudioSource.uri(
-  //     Uri.parse(
-  //         'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3'),
-  //     tag: MediaItem(
-  //       // Specify a unique ID for each media item:
-  //       id: '1',
-  //       // Metadata to display in the notification:
-  //       artist: "Album name",
-  //       title: "Song name",
-  //       artUri: Uri.parse('https://picsum.photos/seed/204/600'),
-  //     ),
-  //   ),
-  //   AudioSource.uri(
-  //     Uri.parse(' '),
-  //     tag: MediaItem(
-  //       // Specify a unique ID for each media item:
-  //       id: '1',
-  //       // Metadata to display in the notification:
-  //       artist: "Album name",
-  //       title: "Song name",
-  //       artUri: Uri.parse('https://picsum.photos/seed/205/600'),
-  //     ),
-  //   ),
-  // ]);
 
   late int index;
 
-  // void loadSongs() {
-  //   // Load songs from a data source
-  //   _songModelList =
-  //       widget.songModelList; // Assign the loaded songs to _songModelList
-  // }
-
-  // playsong(String uri) {
-  //   try {
-  //     _audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(uri)));
-  //   } on Exception {
-  //     log("error parsing song");
-  //   }
-  // }
   List<dynamic> playlist = [];
   // @override
   void initState() {
     super.initState();
-
+    //log(playlist.toString());
+    initAsyncState();
     index = widget.index;
     playlist = widget.playlist;
     _audioPlayer = widget.player;
     _audioPlayerall = widget.player;
-
+    //  log(playlist.toString());
     WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
-
-  // Future<void> _init() async {
-  //   String uri = playlist[index].uri!;
-  //   String album = _songModelList[index].artist ?? '';
-  //   String artUri = _songModelList[index].displayName;
-
-  //   await _audioPlayer.setAudioSource(AudioSource.uri(
-  //     Uri.parse(uri),
-  //     tag: MediaItem(
-  //       // Specify a unique ID for each media item:
-  //       id: '1',
-  //       // Metadata to display in the notification:
-  //       album: album,
-  //       title: artUri,
-  //       artUri: Uri.parse('https://picsum.photos/seed/204/600'),
-  //     ),
-  //   ));
-  // }
 
   @override
   void dispose() {
@@ -524,11 +437,145 @@ class _SongoverviewWidgetonlinepState extends State<SongoverviewWidgetonlinep> {
                               borderWidth: 1,
                               buttonSize: 60,
                               icon: const Icon(
-                                Icons.repeat,
+                                Icons.download_outlined,
                                 color: Color(0xFF4E5D75),
                                 size: 30,
                               ),
-                              onPressed: () {},
+                              onPressed: () async {
+                                log("a");
+                                log(playlist[index].toString());
+                                double progress = 0;
+                                final fileName = '${playlist[index].title}.webm'
+                                    .replaceAll(r'\', '')
+                                    .replaceAll('/', '')
+                                    .replaceAll('*', '')
+                                    .replaceAll('?', '')
+                                    .replaceAll('"', '')
+                                    .replaceAll('<', '')
+                                    .replaceAll('>', '')
+                                    .replaceAll('|', '')
+                                    .replaceAll(' ', '_');
+                                log("b");
+                                var file = File('$path/$fileName');
+                                final file2 = File('$path/$fileName'
+                                    .replaceAll('.webm', '.mp3'));
+                                await dir?.create(recursive: true);
+                                var permaUrl =
+                                    'https://www.youtube.com/watch?v=${playlist[index].id}';
+                                final manifest = await yt.videos.streamsClient
+                                    .getManifest(permaUrl);
+                                log("c");
+                                final streams = manifest.audioOnly.first;
+                                final audio = streams;
+                                final audioStream =
+                                    yt.videos.streamsClient.get(audio);
+                                log("d");
+                                log(path.toString());
+                                await dir?.create(recursive: true);
+                                if (File('$path/$fileName'
+                                        .replaceAll('.webm', '.mp3')) ==
+                                    true) {
+                                  if (progress == 100) {
+                                    Fluttertoast.showToast(
+                                      msg: 'already downloaded',
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      timeInSecForIosWeb: 1,
+                                      backgroundColor: Colors.grey[700],
+                                      textColor: Colors.white,
+                                    );
+                                  }
+                                  print('already downloaded');
+                                } else {
+                                  log("e");
+                                  final output = file.openWrite(
+                                      mode: FileMode.writeOnlyAppend);
+                                  var len = audio.size.totalBytes;
+                                  var count = 0;
+                                  var msg =
+                                      'Downloading ${playlist[index].title}.${audio.container.name}';
+                                  log("f");
+                                  stdout.writeln(msg);
+                                  await for (final data in audioStream) {
+                                    count += data.length;
+
+                                    setState(() {
+                                      progress = ((count / len) * 100)
+                                          .ceil()
+                                          .toDouble();
+                                    });
+
+                                    print(progress);
+                                    output.add(data);
+                                  }
+                                  await output.flush();
+                                  await output.close();
+                                  //classify()
+                                  var filePath = '$path/$fileName';
+
+                                  final String command =
+                                      '-i $filePath -acodec libmp3lame ${filePath.replaceAll('.webm', '.mp3')}';
+
+                                  _flutterFFmpeg.execute(command).then((rc) {
+                                    if (rc == 0) {
+                                      print('Conversion succeeded!');
+                                    } else {
+                                      print('Conversion failed with code $rc');
+                                    }
+                                  });
+                                  await Future.delayed(Duration(seconds: 5));
+                                  log(progress.toString());
+                                  if (progress == 100) {
+                                    Fluttertoast.showToast(
+                                      msg: 'Download completed!',
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      timeInSecForIosWeb: 1,
+                                      backgroundColor: Colors.grey[700],
+                                      textColor: Colors.white,
+                                    );
+                                  }
+                                  //delete webm format
+                                  if (filePath.endsWith('.webm') ||
+                                      filePath.endsWith('.mp4')) {
+                                    file.delete();
+                                  }
+                                }
+
+                                var filePath =
+                                    '$path/${fileName.replaceAll('.webm', '.mp3')}';
+                                log(filePath);
+                                String genre = await classify(filePath,
+                                    fileName.replaceAll('.webm', '.mp3'));
+                                log(genre);
+                                String genref = genre.replaceAll('"', '');
+
+                                if (genref != null) {
+                                  Map<String, dynamic> data = {
+                                    'id': playlist[index].id.toString(),
+                                    'name': playlist[index].title.toString(),
+                                    'yt_url': permaUrl.toString(),
+                                    'duration':
+                                        playlist[index].duration.toString(),
+                                    'img_url':
+                                        'https://img.youtube.com/vi/${playlist[index].id}/maxresdefault.jpg'
+                                  };
+
+                                  CollectionReference collectionRef =
+                                      FirebaseFirestore.instance
+                                          .collection(genref);
+
+                                  DocumentReference documentRef = collectionRef
+                                      .doc(playlist[index].title.toString());
+
+                                  documentRef
+                                      .set(data)
+                                      .then((value) =>
+                                          print('Document added successfully!'))
+                                      .catchError((error) => print(
+                                          'Failed to add document: $error'));
+                                }
+                              },
                             ),
                           ],
                         ),
@@ -553,13 +600,6 @@ class Controls extends StatelessWidget {
   });
   final AudioPlayer audioPlayer;
   final int index;
-  // void playprevious() {
-  //   if (index - 1 < 0) {
-  //     // List<AudioSource> playlist = _SongoverviewWidgetState().returnplaylist();
-  //     audioPlayer.setAudioSource(playlist[index - 1]);
-  //     audioPlayer.play();
-  //   }
-  // }
 
   @override
   Widget build(Object context) {

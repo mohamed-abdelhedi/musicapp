@@ -1,18 +1,10 @@
 import 'dart:developer';
-
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
-import 'package:musicapp/provider/song_model_provider.dart';
-import 'package:on_audio_query/on_audio_query.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
-import '/flutter_flow/flutter_flow_util.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
-import 'package:provider/provider.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:audio_session/audio_session.dart';
@@ -70,126 +62,12 @@ class _SongoverviewWidgetState extends State<SongoverviewWidget> {
     widget.player.seek(duration);
   }
 
-  // void parseSong() {
-  //   try {
-  //     for (var element in widget.songModelList) {
-  //       songList.add(
-  //         AudioSource.uri(
-  //           Uri.parse(element.uri!),
-  //           tag: MediaItem(
-  //             id: element.id.toString(),
-  //             album: element.album ?? "No Album",
-  //             title: element.displayNameWOExt,
-  //             artUri: Uri.parse(element.id.toString()),
-  //           ),
-  //         ),
-  //       );
-  //     }
-
-  //     widget.player.setAudioSource(
-  //       ConcatenatingAudioSource(children: songList),
-  //     );
-  //     widget.player.play();
-  //     _isPlaying = true;
-
-  //     widget.player.durationStream.listen((duration) {
-  //       if (duration != null) {
-  //         setState(() {
-  //           _duration = duration;
-  //         });
-  //       }
-  //     });
-  //     widget.player.positionStream.listen((position) {
-  //       setState(() {
-  //         _position = position;
-  //       });
-  //     });
-  //     listenToEvent();
-  //     listenToSongIndex();
-  //   } on Exception catch (_) {
-  //     popBack();
-  //   }
-  // }
-
-  // void listenToEvent() {
-  //   widget.player.playerStateStream.listen((state) {
-  //     if (state.playing) {
-  //       setState(() {
-  //         _isPlaying = true;
-  //       });
-  //     } else {
-  //       setState(() {
-  //         _isPlaying = false;
-  //       });
-  //     }
-  //     if (state.processingState == ProcessingState.completed) {
-  //       setState(() {
-  //         _isPlaying = false;
-  //       });
-  //     }
-  //   });
-  // }
-
-  // void listenToSongIndex() {
-  //   widget.player.currentIndexStream.listen(
-  //     (event) {
-  //       setState(
-  //         () {
-  //           if (event != null) {
-  //             currentIndex = event;
-  //           }
-  //           context
-  //               .read<SongModelProvider>()
-  //               .setId(widget.songModelList[currentIndex].id);
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
-
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _unfocusNode = FocusNode();
-  // final _playlist = ConcatenatingAudioSource(children: [
-  //   AudioSource.uri(
-  //     Uri.parse(
-  //         'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3'),
-  //     tag: MediaItem(
-  //       // Specify a unique ID for each media item:
-  //       id: '1',
-  //       // Metadata to display in the notification:
-  //       artist: "Album name",
-  //       title: "Song name",
-  //       artUri: Uri.parse('https://picsum.photos/seed/204/600'),
-  //     ),
-  //   ),
-  //   AudioSource.uri(
-  //     Uri.parse(' '),
-  //     tag: MediaItem(
-  //       // Specify a unique ID for each media item:
-  //       id: '1',
-  //       // Metadata to display in the notification:
-  //       artist: "Album name",
-  //       title: "Song name",
-  //       artUri: Uri.parse('https://picsum.photos/seed/205/600'),
-  //     ),
-  //   ),
-  // ]);
-
+  
   late int index;
 
-  // void loadSongs() {
-  //   // Load songs from a data source
-  //   _songModelList =
-  //       widget.songModelList; // Assign the loaded songs to _songModelList
-  // }
-
-  // playsong(String uri) {
-  //   try {
-  //     _audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(uri)));
-  //   } on Exception {
-  //     log("error parsing song");
-  //   }
-  // }
+  
   List<AudioSource> playlist = [];
   // @override
   void initState() {
@@ -203,24 +81,7 @@ class _SongoverviewWidgetState extends State<SongoverviewWidget> {
     WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
 
-  // Future<void> _init() async {
-  //   String uri = playlist[index].uri!;
-  //   String album = _songModelList[index].artist ?? '';
-  //   String artUri = _songModelList[index].displayName;
-
-  //   await _audioPlayer.setAudioSource(AudioSource.uri(
-  //     Uri.parse(uri),
-  //     tag: MediaItem(
-  //       // Specify a unique ID for each media item:
-  //       id: '1',
-  //       // Metadata to display in the notification:
-  //       album: album,
-  //       title: artUri,
-  //       artUri: Uri.parse('https://picsum.photos/seed/204/600'),
-  //     ),
-  //   ));
-  // }
-
+  
   @override
   void dispose() {
     _unfocusNode.dispose();
