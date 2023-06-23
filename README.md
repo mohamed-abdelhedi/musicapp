@@ -89,6 +89,7 @@ A few of the things can be add to MusicApp:
 ## Acknowledgments
 
 Thanks to https://github.com/Sangwan5688 help me with his application 'BlackHole'
+
 Thanks to www.figma.com/@artisan_ukraine for his figma Design
 
 Note: this application is Not completed and Not stable yet
