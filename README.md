@@ -82,7 +82,7 @@ A few of the things can be add to MusicApp:
 - Clone or download the repo
 - `flutter pub get` to install dependencies
 - `flutter run` to run the application
-- Start the flask server to activate AI model classfication and change the host address (located in 
+- Start the flask server to activate AI model classfication and change the host address (located in lib/services/model/app.py)
 - Dont forget to change firebase address 
   
 
